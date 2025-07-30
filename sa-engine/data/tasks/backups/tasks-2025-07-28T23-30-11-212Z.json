@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2025-07-28T23:29:18.416Z",
+    "modified": "2025-07-28T23:29:18.416Z",
+    "framework": "super-agents",
+    "totalTasks": 0,
+    "maxDepth": 1
+  },
+  "configuration": {
+    "taggedLists": true,
+    "defaultTag": "main",
+    "statusTransitions": {
+      "pending": [
+        "in-progress",
+        "deferred",
+        "cancelled"
+      ],
+      "in-progress": [
+        "blocked",
+        "review",
+        "done",
+        "deferred",
+        "cancelled"
+      ],
+      "blocked": [
+        "in-progress",
+        "deferred",
+        "cancelled"
+      ],
+      "review": [
+        "in-progress",
+        "done",
+        "deferred"
+      ],
+      "done": [],
+      "deferred": [
+        "pending",
+        "cancelled"
+      ],
+      "cancelled": []
+    },
+    "autoNumbering": true,
+    "dependencyValidation": true
+  },
+  "tags": {
+    "main": {
+      "name": "Main Tasks",
+      "description": "Primary task list",
+      "tasks": [],
+      "metadata": {
+        "created": "2025-07-28T23:29:18.416Z",
+        "modified": "2025-07-28T23:29:18.416Z",
+        "taskCount": 0
+      }
+    }
+  }
+}

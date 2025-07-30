@@ -1,0 +1,161 @@
+template:
+  id: jest-unit-test-template
+  name: Jest Unit Test
+  version: 1.0
+  description: Template for generating Jest unit tests
+  tags: [jest, testing, unit-test, javascript]
+  output:
+    format: text
+    filename: "{{testSubject}}.test.js"
+
+metadata:
+  author: super-agents
+  framework: jest
+  created: 2025-01-29
+
+variables:
+  required: [testSubject]
+  optional: [typescript, testType, importPath, mockDependencies, testCases]
+  defaults:
+    typescript: false
+    testType: component
+    importPath: "../{{testSubject}}"
+    mockDependencies: []
+    testCases: []
+
+sections:
+  - id: imports
+    content: |
+      {{#if (eq testType 'component')}}
+      import React from 'react';
+      import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+      {{#if typescript}}import { vi } from 'vitest';{{else}}import { jest } from '@jest/globals';{{/if}}
+      {{else}}
+      {{#if typescript}}import { vi } from 'vitest';{{else}}const { jest } = require('@jest/globals');{{/if}}
+      {{/if}}
+      import {{testSubject}} from '{{importPath}}';
+
+  - id: mock-dependencies
+    condition: mockDependencies
+    content: |
+      {{#if comments}}// Mock dependencies{{/if}}
+      {{#each mockDependencies}}
+      {{#if ../typescript}}vi.mock('{{module}}');{{else}}jest.mock('{{module}}');{{/if}}
+      {{/each}}
+
+  - id: test-suite
+    content: |
+      
+      describe('{{testSubject}}', () => {
+        {{#if (eq testType 'component')}}
+        beforeEach(() => {
+          {{#if comments}}// Reset mocks before each test{{/if}}
+          {{#if typescript}}vi.clearAllMocks();{{else}}jest.clearAllMocks();{{/if}}
+        });
+        {{/if}}
+
+  - id: basic-tests
+    content: |
+        {{#if (eq testType 'component')}}
+        test('renders without crashing', () => {
+          render(<{{testSubject}} />);
+          expect(screen.getByText('{{testSubject}}')).toBeInTheDocument();
+        });
+
+        test('displays loading state', () => {
+          render(<{{testSubject}} />);
+          const loadingElement = screen.queryByText('Loading...');
+          {{#if comments}}// Loading might not be visible initially{{/if}}
+          expect(loadingElement).toBeInTheDocument();
+        });
+
+        test('handles user interactions', async () => {
+          render(<{{testSubject}} />);
+          const actionButton = screen.getByText('Action');
+          
+          fireEvent.click(actionButton);
+          
+          await waitFor(() => {
+            {{#if comments}}// Add assertions based on expected behavior{{/if}}
+            expect(actionButton).toBeInTheDocument();
+          });
+        });
+        {{else}}
+        test('should be defined', () => {
+          expect({{testSubject}}).toBeDefined();
+        });
+
+        test('should handle basic functionality', async () => {
+          {{#if comments}}// TODO: Add specific test assertions{{/if}}
+          const result = await {{testSubject}}();
+          expect(result).toBeTruthy();
+        });
+        {{/if}}
+
+  - id: custom-test-cases
+    condition: testCases
+    content: |
+        {{#each testCases}}
+        
+        test('{{description}}', async () => {
+          {{#if setup}}
+          {{#if ../comments}}// Test setup{{/if}}
+          {{setup}}
+          {{/if}}
+          
+          {{#if ../comments}}// Test execution{{/if}}
+          {{action}}
+          
+          {{#if ../comments}}// Assertions{{/if}}
+          {{assertion}}
+        });
+        {{/each}}
+
+  - id: error-handling-tests
+    content: |
+        
+        describe('error handling', () => {
+          {{#if (eq testType 'component')}}
+          test('displays error message when action fails', async () => {
+            {{#if comments}}// Mock a failing action{{/if}}
+            const consoleSpy = {{#if typescript}}vi.spyOn(console, 'error').mockImplementation(() => {});{{else}}jest.spyOn(console, 'error').mockImplementation(() => {});{{/if}}
+            
+            render(<{{testSubject}} />);
+            const actionButton = screen.getByText('Action');
+            
+            {{#if comments}}// Simulate error{{/if}}
+            fireEvent.click(actionButton);
+            
+            await waitFor(() => {
+              const errorElement = screen.queryByText(/error/i);
+              expect(errorElement).toBeInTheDocument();
+            });
+            
+            consoleSpy.mockRestore();
+          });
+          {{else}}
+          test('handles errors gracefully', async () => {
+            {{#if comments}}// TODO: Implement error handling test{{/if}}
+            await expect({{testSubject}}()).rejects.toThrow();
+          });
+          {{/if}}
+        });
+
+  - id: test-suite-end
+    content: |
+      });
+
+  - id: test-utilities
+    condition: testType
+    content: |
+      
+      {{#if comments}}// Test utilities and helpers{{/if}}
+      {{#if (eq testType 'component')}}
+      const renderWith{{testSubject}} = (props = {}) => {
+        return render(<{{testSubject}} {...props} />);
+      };
+      
+      const getActionButton = () => screen.getByText('Action');
+      const getLoadingElement = () => screen.queryByText('Loading...');
+      const getErrorElement = () => screen.queryByText(/error/i);
+      {{/if}}

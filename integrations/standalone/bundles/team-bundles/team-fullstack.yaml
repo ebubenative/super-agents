@@ -1,0 +1,368 @@
+bundle:
+  id: team-fullstack
+  name: Full-Stack Development Team
+  version: 1.0.0
+  description: Complete development team with all agents for full-stack projects
+  category: team
+  
+metadata:
+  author: Super Agents Framework
+  created: 2025-07-30
+  framework: super-agents-v1
+  target_audience: Full-stack development teams
+  project_types: [web-app, mobile-app, enterprise, saas]
+  
+configuration:
+  installation_type: complete
+  mcp_integration: true
+  template_integration: true
+  task_management: hierarchical
+  workflow_orchestration: true
+  
+agents:
+  # Strategic & Planning Agents
+  - id: analyst
+    role: Business Analyst
+    priority: high
+    required: true
+    tools: [sa-research-market, sa-create-brief, sa-brainstorm-session, sa-competitor-analysis]
+    templates: [market-research-tmpl, project-brief-tmpl, competitor-analysis-tmpl]
+    
+  - id: pm
+    role: Product Manager
+    priority: high
+    required: true
+    tools: [sa-generate-prd, sa-create-epic, sa-prioritize-features, sa-stakeholder-analysis]
+    templates: [prd-tmpl, brownfield-prd-tmpl]
+    
+  # Technical Architecture
+  - id: architect
+    role: System Architect
+    priority: high
+    required: true
+    tools: [sa-design-system, sa-analyze-brownfield, sa-tech-recommendations, sa-create-architecture]
+    templates: [architecture-tmpl, fullstack-architecture-tmpl, brownfield-architecture-tmpl]
+    
+  # Development Team
+  - id: developer
+    role: Software Developer
+    priority: high
+    required: true
+    tools: [sa-implement-story, sa-run-tests, sa-debug-issue, sa-validate-implementation]
+    templates: [react-component-tmpl, express-api-service-tmpl, jest-unit-test-tmpl]
+    
+  - id: ux-expert
+    role: UX/UI Expert
+    priority: high
+    required: true
+    tools: [sa-create-frontend-spec, sa-generate-ui-prompt, sa-design-wireframes, sa-accessibility-audit]
+    templates: [front-end-spec-tmpl, front-end-architecture-tmpl]
+    
+  # Quality & Process
+  - id: qa
+    role: Quality Assurance
+    priority: high
+    required: true
+    tools: [sa-review-code, sa-refactor-code, sa-validate-quality, sa-review-story]
+    templates: [jest-unit-test-tmpl]
+    
+  - id: product-owner
+    role: Product Owner
+    priority: medium
+    required: true
+    tools: [sa-execute-checklist, sa-shard-document, sa-validate-story-draft, sa-correct-course]
+    templates: [story-tmpl]
+    
+  - id: scrum-master
+    role: Scrum Master
+    priority: medium
+    required: true
+    tools: [sa-create-story, sa-create-next-story, sa-update-workflow, sa-track-progress]
+    templates: [story-tmpl]
+    
+  # Advanced Orchestration (Optional)
+  - id: bmad-master
+    role: BMAD Master
+    priority: low
+    required: false
+    tools: [sa-start-workflow, sa-workflow-status, sa-workflow-validation]
+    templates: []
+    
+  - id: bmad-orchestrator
+    role: BMAD Orchestrator  
+    priority: low
+    required: false
+    tools: [sa-track-progress]
+    templates: []
+
+workflows:
+  # Project initialization workflow
+  project_init:
+    name: Project Initialization
+    description: Complete project setup and planning
+    phases:
+      - name: discovery
+        agents: [analyst, pm]
+        tools: [sa-research-market, sa-brainstorm-session]
+        templates: [market-research-tmpl, project-brief-tmpl]
+        
+      - name: planning
+        agents: [pm, architect]
+        tools: [sa-generate-prd, sa-design-system]
+        templates: [prd-tmpl, architecture-tmpl]
+        
+      - name: design
+        agents: [ux-expert, architect]
+        tools: [sa-create-frontend-spec, sa-design-wireframes]
+        templates: [front-end-spec-tmpl, front-end-architecture-tmpl]
+        
+      - name: implementation_planning
+        agents: [scrum-master, developer]
+        tools: [sa-create-story, sa-create-next-story]
+        templates: [story-tmpl]
+  
+  # Development workflow
+  feature_development:
+    name: Feature Development
+    description: End-to-end feature development cycle
+    phases:
+      - name: story_creation
+        agents: [scrum-master, product-owner]
+        tools: [sa-create-story, sa-validate-story-draft]
+        templates: [story-tmpl]
+        
+      - name: technical_design
+        agents: [architect, developer]
+        tools: [sa-tech-recommendations, sa-design-system]
+        templates: [architecture-tmpl]
+        
+      - name: ui_ux_design
+        agents: [ux-expert]
+        tools: [sa-create-frontend-spec, sa-generate-ui-prompt]
+        templates: [front-end-spec-tmpl]
+        
+      - name: implementation
+        agents: [developer]
+        tools: [sa-implement-story, sa-run-tests]
+        templates: [react-component-tmpl, express-api-service-tmpl]
+        
+      - name: quality_assurance
+        agents: [qa]
+        tools: [sa-review-code, sa-validate-quality]
+        templates: [jest-unit-test-tmpl]
+        
+      - name: review_and_release
+        agents: [product-owner, scrum-master]
+        tools: [sa-correct-course, sa-track-progress]
+        templates: []
+
+tools:
+  # Core Tools (Always Included)
+  core:
+    - sa-initialize-project
+    - sa-list-tasks
+    - sa-get-task
+    - sa-update-task-status
+    
+  # Agent-Specific Tools
+  analyst:
+    - sa-research-market
+    - sa-create-brief
+    - sa-brainstorm-session
+    - sa-competitor-analysis
+    
+  pm:
+    - sa-generate-prd
+    - sa-create-epic
+    - sa-prioritize-features
+    - sa-stakeholder-analysis
+    
+  architect:
+    - sa-design-system
+    - sa-analyze-brownfield
+    - sa-tech-recommendations
+    - sa-create-architecture
+    
+  developer:
+    - sa-implement-story
+    - sa-run-tests
+    - sa-debug-issue
+    - sa-validate-implementation
+    
+  ux_expert:
+    - sa-create-frontend-spec
+    - sa-generate-ui-prompt
+    - sa-design-wireframes
+    - sa-accessibility-audit
+    
+  qa:
+    - sa-review-code
+    - sa-refactor-code
+    - sa-validate-quality
+    - sa-review-story
+    
+  product_owner:
+    - sa-execute-checklist
+    - sa-shard-document
+    - sa-validate-story-draft
+    - sa-correct-course
+    
+  scrum_master:
+    - sa-create-story
+    - sa-create-next-story
+    - sa-update-workflow
+    - sa-track-progress
+    
+  # Workflow Tools
+  workflow:
+    - sa-start-workflow
+    - sa-workflow-status
+    - sa-workflow-validation
+    
+  # Task Master Integration
+  task_master:
+    - sa-parse-prd
+    - sa-expand-task
+    - sa-analyze-complexity
+    - sa-generate-tasks
+    
+  # Dependency Management
+  dependencies:
+    - sa-add-dependency
+    - sa-remove-dependency
+    - sa-validate-dependencies
+    - sa-dependency-graph
+
+templates:
+  # Documentation Templates
+  documentation:
+    - prd-tmpl
+    - brownfield-prd-tmpl
+    - architecture-tmpl
+    - fullstack-architecture-tmpl
+    - brownfield-architecture-tmpl
+    - project-brief-tmpl
+    - market-research-tmpl
+    - competitor-analysis-tmpl
+    
+  # Development Templates
+  development:
+    - react-component-tmpl
+    - react-typescript-component-tmpl
+    - express-api-service-tmpl
+    - jest-unit-test-tmpl
+    
+  # Design Templates
+  design:
+    - front-end-spec-tmpl
+    - front-end-architecture-tmpl
+    
+  # Process Templates
+  process:
+    - story-tmpl
+    - brainstorming-output-tmpl
+
+ide_integrations:
+  claude_code:
+    mcp_server: true
+    memory_file: true
+    custom_commands: true
+    agents: all
+    
+  cursor:
+    rules_files: true
+    workspace_config: true
+    agents: all
+    
+  vscode:
+    workspace_settings: true
+    code_snippets: true
+    extension_support: planned
+    agents: all
+    
+  windsurf:
+    generic_integration: true
+    agents: all
+
+installation:
+  prerequisites:
+    - node_js: ">=18.0.0"
+    - npm: ">=8.0.0"
+    - git: ">=2.0.0"
+    
+  optional_dependencies:
+    - typescript: ">=4.0.0"
+    - eslint: ">=8.0.0"
+    - prettier: ">=2.0.0"
+    
+  setup_steps:
+    1. Install Super Agents framework
+    2. Configure MCP server
+    3. Setup IDE integration
+    4. Initialize project workspace
+    5. Configure agent access
+    6. Test installation
+    
+  validation:
+    - verify_agents_loaded: true
+    - test_mcp_tools: true
+    - validate_templates: true
+    - check_ide_integration: true
+
+usage_examples:
+  project_initialization:
+    description: Start a new full-stack project
+    commands:
+      - sa_initialize_project
+      - sa_research_market
+      - sa_generate_prd
+      - sa_design_system
+      
+  feature_development:
+    description: Develop a new feature end-to-end  
+    commands:
+      - sa_create_story
+      - sa_create_frontend_spec
+      - sa_implement_story
+      - sa_review_code
+      
+  architecture_review:
+    description: Review and improve system architecture
+    commands:
+      - sa_analyze_brownfield
+      - sa_tech_recommendations
+      - sa_create_architecture
+
+best_practices:
+  agent_usage:
+    - Use appropriate agent for each task type
+    - Follow agent-specific communication styles
+    - Leverage agent expertise for specialized work
+    
+  task_management:
+    - Use hierarchical task IDs (1.2.3)
+    - Maintain clear status tracking
+    - Document dependencies and acceptance criteria
+    
+  template_usage:
+    - Use templates for consistent documentation
+    - Customize templates for project needs
+    - Maintain template versioning
+    
+  workflow_orchestration:
+    - Follow defined workflow phases
+    - Use appropriate agents for each phase
+    - Track progress and validate outputs
+
+support:
+  documentation:
+    - Agent reference guides
+    - Template documentation
+    - Workflow guides
+    - Troubleshooting guides
+    
+  community:
+    - Framework repository
+    - Issue tracking
+    - Feature requests
+    - Community contributions

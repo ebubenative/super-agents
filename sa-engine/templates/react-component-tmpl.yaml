@@ -1,0 +1,126 @@
+template:
+  id: react-component-template
+  name: React Functional Component
+  version: 1.0
+  description: Template for generating React functional components
+  tags: [react, component, frontend, javascript]
+  output:
+    format: text
+    filename: "{{componentName}}.jsx"
+
+metadata:
+  author: super-agents
+  framework: react
+  created: 2025-01-29
+
+variables:
+  required: [componentName]
+  optional: [typescript, comments, storyTitle, hooks, props, styles]
+  defaults:
+    typescript: false
+    comments: true
+    hooks: [useState, useEffect]
+    props: []
+    styles: true
+
+sections:
+  - id: imports
+    content: |
+      import React{{#if hooks}}, { {{#each hooks}}{{this}}{{#unless @last}}, {{/unless}}{{/each}} }{{/if}} from 'react';
+      {{#if typescript}}import { FC } from 'react';{{/if}}
+      {{#if styles}}import './{{componentName}}.css';{{/if}}
+
+  - id: type-definitions
+    condition: typescript
+    content: |
+      {{#if props}}
+      interface {{componentName}}Props {
+      {{#each props}}
+        {{name}}: {{type}};{{#if description}} // {{description}}{{/if}}
+      {{/each}}
+      }
+      {{/if}}
+
+  - id: component-definition
+    content: |
+      {{#if comments}}
+      /**
+       * {{componentName}} Component
+       {{#if storyTitle}}* {{storyTitle}}{{/if}}
+       {{#if props}}* @param props - Component props{{/if}}
+       */
+      {{/if}}
+      const {{componentName}}{{#if typescript}}: FC{{#if props}}<{{componentName}}Props>{{/if}}{{/if}} = ({{#if props}}{ {{#each props}}{{name}}{{#unless @last}}, {{/unless}}{{/each}} }{{/if}}) => {
+
+  - id: state-hooks
+    condition: hooks
+    content: |
+      {{#if (includes hooks 'useState')}}
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState(null);
+      {{/if}}
+
+  - id: effect-hooks
+    condition: hooks
+    content: |
+      {{#if (includes hooks 'useEffect')}}
+        useEffect(() => {
+          {{#if comments}}// Component initialization logic{{/if}}
+          {{#if comments}}// TODO: Implement component logic{{/if}}
+        }, []);
+      {{/if}}
+
+  - id: event-handlers
+    content: |
+      {{#if comments}}  // Event handlers{{/if}}
+        const handleAction = async () => {
+          setLoading(true);
+          try {
+            {{#if comments}}// TODO: Implement action handler{{/if}}
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+  - id: render-return
+    content: |
+        return (
+          <div className="{{toLowerCase componentName}}">
+            <h2>{{componentName}}</h2>
+            {loading && <div className="loading">Loading...</div>}
+            {error && <div className="error">{error}</div>}
+            <button onClick={handleAction}>Action</button>
+          </div>
+        );
+      };
+
+  - id: export
+    content: |
+      
+      export default {{componentName}};
+
+  - id: css-styles
+    condition: styles
+    content: |
+      
+      /* CSS file: {{componentName}}.css */
+      .{{toLowerCase componentName}} {
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      .{{toLowerCase componentName}} .loading {
+        color: #666;
+        font-style: italic;
+      }
+      
+      .{{toLowerCase componentName}} .error {
+        color: #d32f2f;
+        background-color: #ffebee;
+        padding: 0.5rem;
+        border-radius: 4px;
+        margin: 0.5rem 0;
+      }

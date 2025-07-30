@@ -1,0 +1,65 @@
+{
+  "name": "super-agents",
+  "version": "1.0.0",
+  "description": "Universal AI-powered development framework combining BMAD-METHOD and Claude Task Master",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "sa": "./super-agents-cli/index.js"
+  },
+  "scripts": {
+    "dev": "node --watch super-agents-cli/index.js",
+    "test": "node --test",
+    "lint": "eslint .",
+    "start": "node super-agents-cli/index.js"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "development",
+    "framework",
+    "mcp",
+    "claude",
+    "bmad",
+    "taskmaster"
+  ],
+  "author": "Super Agents Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.0.4",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.0",
+    "handlebars": "^4.7.8",
+    "inquirer": "^9.2.0",
+    "joi": "^17.11.0",
+    "ora": "^8.0.0",
+    "yaml": "^2.4.0"
+  },
+  "devDependencies": {
+    "@inkjs/ui": "^2.0.0",
+    "@types/node": "^20.11.0",
+    "boxen": "^8.0.1",
+    "cli-table3": "^0.6.5",
+    "eslint": "^8.57.0",
+    "figlet": "^1.8.2",
+    "gradient-string": "^3.0.0",
+    "ink": "^6.1.0",
+    "kleur": "^4.1.5",
+    "listr2": "^9.0.1",
+    "nanospinner": "^1.2.2",
+    "terminal-image": "^3.1.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/super-agents/super-agents.git"
+  },
+  "bugs": {
+    "url": "https://github.com/super-agents/super-agents/issues"
+  },
+  "homepage": "https://github.com/super-agents/super-agents#readme"
+}

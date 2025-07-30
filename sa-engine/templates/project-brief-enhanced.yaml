@@ -1,0 +1,395 @@
+template:
+  id: project-brief-enhanced
+  name: Enhanced Project Brief
+  version: 2.1
+  description: Comprehensive project brief template with enhanced variable substitution and validation
+  tags: [project, brief, planning, foundation]
+  output:
+    format: markdown
+    filename: "docs/{{project_slug}}-brief.md"
+    title: "Project Brief: {{project_name}}"
+
+metadata:
+  author: Super Agents Framework
+  created: 2025-07-28
+  framework: super-agents
+  bmadCompatible: true
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+  customElicitation:
+    title: "Project Brief Elicitation Actions"
+    options:
+      - "Expand section with more specific details"
+      - "Validate against similar successful products"
+      - "Stress test assumptions with edge cases"
+      - "Explore alternative solution approaches"
+      - "Analyze resource/constraint trade-offs"
+      - "Generate risk mitigation strategies"
+      - "Challenge scope from MVP minimalist view"
+      - "Brainstorm creative feature possibilities"
+      - "If only we had [resource/capability/time]..."
+      - "Proceed to next section"
+  hooks:
+    beforeRender: "validate_project_context"
+    afterRender: "generate_project_artifacts"
+
+variables:
+  required:
+    - project_name
+    - project_slug
+    - target_audience
+    - primary_problem
+  optional:
+    - company_name
+    - project_manager
+    - budget_range
+    - timeline_weeks
+    - tech_stack_preference
+  defaults:
+    company_name: "Your Company"
+    project_manager: "Project Manager"
+    budget_range: "To be determined"
+    timeline_weeks: 12
+    tech_stack_preference: "Modern web technologies"
+
+sections:
+  - id: introduction
+    title: "Introduction"
+    instruction: |
+      This template guides creation of a comprehensive Project Brief that serves as the foundational input for product development.
+      
+      Start by asking the user which mode they prefer:
+      
+      1. **Interactive Mode** - Work through each section collaboratively
+      2. **YOLO Mode** - Generate complete draft for review and refinement
+      
+      Before beginning, understand what inputs are available (brainstorming results, market research, competitive analysis, initial ideas) and gather project context.
+    content: |
+      This document serves as the foundational blueprint for **{{project_name}}**, providing essential context, objectives, and strategic direction for the development team.
+      
+      **Document Information:**
+      - **Project**: {{project_name}}
+      - **Company**: {{company_name}}
+      - **Project Manager**: {{project_manager}}
+      - **Date**: {{date 'long'}}
+      - **Version**: 1.0
+
+  - id: executive-summary
+    title: "Executive Summary"
+    instruction: |
+      Create a concise overview that captures the essence of the project. Include:
+      - Product concept in 1-2 sentences
+      - Primary problem being solved
+      - Target market identification
+      - Key value proposition
+    template: |
+      **{{project_name}}** is {{#if product_concept}}{{product_concept}}{{else}}[Product concept to be defined]{{/if}} designed to solve {{primary_problem}} for {{target_audience}}.
+      
+      {{#if value_proposition}}
+      **Value Proposition:** {{value_proposition}}
+      {{else}}
+      **Value Proposition:** [Key value proposition to be defined during discovery]
+      {{/if}}
+      
+      {{#if market_size}}
+      **Market Opportunity:** {{market_size}}
+      {{/if}}
+    elicit: true
+
+  - id: problem-statement
+    title: "Problem Statement"
+    instruction: |
+      Define the core problem this project will solve. Be specific about:
+      - Who experiences this problem
+      - When and where it occurs
+      - Current attempted solutions and their limitations
+      - Impact/cost of not solving this problem
+    template: |
+      **Problem Overview:**
+      {{primary_problem}}
+      
+      **Affected Users:**
+      {{target_audience}}
+      
+      {{#if problem_frequency}}
+      **Frequency:** {{problem_frequency}}
+      {{/if}}
+      
+      {{#if current_solutions}}
+      **Current Solutions and Limitations:**
+      {{#each current_solutions}}
+      - {{this}}
+      {{/each}}
+      {{/if}}
+      
+      {{#if problem_impact}}
+      **Impact of Unsolved Problem:**
+      {{problem_impact}}
+      {{/if}}
+    elicit: true
+
+  - id: target-users
+    title: "Target Users & Market"
+    instruction: |
+      Define the primary and secondary user personas. Include:
+      - Demographics and psychographics
+      - User behaviors and preferences
+      - Pain points and motivations
+      - Market size and segments
+    template: |
+      **Primary Users:**
+      {{target_audience}}
+      
+      {{#if user_personas}}
+      **User Personas:**
+      {{#each user_personas}}
+      ### {{@key}}
+      {{this}}
+      {{/each}}
+      {{/if}}
+      
+      {{#if market_segments}}
+      **Market Segments:**
+      {{#bullet market_segments}}{{/bullet}}
+      {{/if}}
+      
+      {{#if user_journey}}
+      **User Journey:**
+      {{user_journey}}
+      {{/if}}
+    elicit: true
+
+  - id: solution-overview
+    title: "Solution Overview"
+    instruction: |
+      Describe the proposed solution at a high level. Include:
+      - Core functionality and features
+      - How it addresses the identified problem
+      - Unique differentiators
+      - Technology approach (if known)
+    template: |
+      **Solution Concept:**
+      {{#if solution_description}}{{solution_description}}{{else}}[Solution concept to be defined]{{/if}}
+      
+      **Core Features:**
+      {{#if core_features}}
+      {{#numbered core_features}}{{/numbered}}
+      {{else}}
+      [Core features to be identified during planning]
+      {{/if}}
+      
+      **Differentiators:**
+      {{#if differentiators}}
+      {{#bullet differentiators}}{{/bullet}}
+      {{else}}
+      [Unique differentiators to be identified]
+      {{/if}}
+      
+      {{#if tech_approach}}
+      **Technology Approach:**
+      {{tech_approach}}
+      {{else}}
+      **Technology Approach:**
+      Preferred stack: {{tech_stack_preference}}
+      [Detailed technology decisions to be made during architecture phase]
+      {{/if}}
+    elicit: true
+
+  - id: success-metrics
+    title: "Success Metrics & Goals"
+    instruction: |
+      Define how success will be measured. Include:
+      - Quantitative metrics (KPIs)
+      - Qualitative success indicators
+      - Short-term and long-term goals
+      - Measurement methods and timeline
+    template: |
+      **Key Performance Indicators (KPIs):**
+      {{#if kpis}}
+      {{#numbered kpis}}{{/numbered}}
+      {{else}}
+      [KPIs to be defined during planning]
+      {{/if}}
+      
+      **Success Criteria:**
+      {{#if success_criteria}}
+      {{#bullet success_criteria}}{{/bullet}}
+      {{else}}
+      [Success criteria to be established]
+      {{/if}}
+      
+      **Timeline Goals:**
+      {{#if timeline_goals}}
+      {{#each timeline_goals}}
+      - **{{@key}}**: {{this}}
+      {{/each}}
+      {{else}}
+      - **MVP**: {{timeline_weeks}} weeks
+      - **Beta**: [To be determined]
+      - **Launch**: [To be determined]
+      {{/if}}
+    elicit: true
+
+  - id: scope-constraints
+    title: "Scope & Constraints"
+    instruction: |
+      Define project boundaries and limitations. Include:
+      - What's in scope for MVP
+      - What's explicitly out of scope
+      - Budget constraints
+      - Timeline constraints
+      - Resource constraints
+      - Technical constraints
+    template: |
+      **MVP Scope:**
+      {{#if mvp_scope}}
+      {{#bullet mvp_scope}}{{/bullet}}
+      {{else}}
+      [MVP scope to be defined during planning]
+      {{/if}}
+      
+      **Out of Scope:**
+      {{#if out_of_scope}}
+      {{#bullet out_of_scope}}{{/bullet}}
+      {{else}}
+      [Items explicitly excluded from MVP]
+      {{/if}}
+      
+      **Constraints:**
+      {{#if budget_constraint}}
+      - **Budget**: {{budget_range}}
+      {{/if}}
+      - **Timeline**: {{timeline_weeks}} weeks for MVP
+      {{#if resource_constraints}}
+      - **Resources**: {{resource_constraints}}
+      {{/if}}
+      {{#if technical_constraints}}
+      - **Technical**: {{technical_constraints}}
+      {{/if}}
+    elicit: true
+
+  - id: stakeholders
+    title: "Key Stakeholders"
+    instruction: |
+      Identify all project stakeholders and their roles. Include:
+      - Project sponsor/owner
+      - Development team roles
+      - External stakeholders
+      - Decision makers
+      - User representatives
+    template: |
+      **Project Team:**
+      - **Project Manager**: {{project_manager}}
+      {{#if stakeholders.sponsor}}
+      - **Sponsor**: {{stakeholders.sponsor}}
+      {{/if}}
+      {{#if stakeholders.product_owner}}
+      - **Product Owner**: {{stakeholders.product_owner}}
+      {{/if}}
+      {{#if stakeholders.tech_lead}}
+      - **Tech Lead**: {{stakeholders.tech_lead}}
+      {{/if}}
+      {{#if stakeholders.designer}}
+      - **Designer**: {{stakeholders.designer}}
+      {{/if}}
+      
+      {{#if external_stakeholders}}
+      **External Stakeholders:**
+      {{#each external_stakeholders}}
+      - **{{@key}}**: {{this}}
+      {{/each}}
+      {{/if}}
+    elicit: true
+
+  - id: risks-assumptions
+    title: "Risks & Assumptions"
+    instruction: |
+      Identify potential risks and key assumptions. Include:
+      - Technical risks
+      - Market risks
+      - Resource risks
+      - Key assumptions being made
+      - Mitigation strategies
+    template: |
+      **Key Risks:**
+      {{#if risks}}
+      {{#each risks}}
+      ### {{this.category}} Risk: {{this.title}}
+      **Description**: {{this.description}}
+      **Impact**: {{this.impact}}
+      **Probability**: {{this.probability}}
+      **Mitigation**: {{this.mitigation}}
+      {{/each}}
+      {{else}}
+      [Risks to be identified during planning]
+      {{/if}}
+      
+      **Key Assumptions:**
+      {{#if assumptions}}
+      {{#numbered assumptions}}{{/numbered}}
+      {{else}}
+      [Key assumptions to be documented]
+      {{/if}}
+    elicit: true
+
+  - id: next-steps
+    title: "Next Steps"
+    instruction: |
+      Define immediate next steps and deliverables. Include:
+      - Required follow-up documents
+      - Key decisions to be made
+      - Action items and owners
+      - Timeline for next phase
+    template: |
+      **Immediate Next Steps:**
+      {{#if next_steps}}
+      {{#numbered next_steps}}{{/numbered}}
+      {{else}}
+      1. Conduct detailed requirements gathering
+      2. Create Product Requirements Document (PRD)
+      3. Develop technical architecture
+      4. Create project timeline and resource plan
+      5. Begin user research and validation
+      {{/if}}
+      
+      **Required Documents:**
+      {{#if required_docs}}
+      {{#bullet required_docs}}{{/bullet}}
+      {{else}}
+      - Product Requirements Document (PRD)
+      - Technical Architecture Document
+      - User Experience Design Brief
+      - Project Plan and Timeline
+      {{/if}}
+      
+      **Key Decisions Needed:**
+      {{#if key_decisions}}
+      {{#bullet key_decisions}}{{/bullet}}
+      {{else}}
+      [Key decisions to be identified]
+      {{/if}}
+
+  - id: appendix
+    title: "Appendix"
+    required: false
+    instruction: |
+      Include any supporting materials, references, or additional context.
+    template: |
+      {{#if references}}
+      **References:**
+      {{#numbered references}}{{/numbered}}
+      {{/if}}
+      
+      {{#if attachments}}
+      **Attachments:**
+      {{#bullet attachments}}{{/bullet}}
+      {{/if}}
+      
+      {{#if glossary}}
+      **Glossary:**
+      {{#each glossary}}
+      **{{@key}}**: {{this}}
+      {{/each}}
+      {{/if}}

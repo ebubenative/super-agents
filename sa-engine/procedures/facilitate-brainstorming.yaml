@@ -1,0 +1,220 @@
+procedure:
+  id: facilitate-brainstorming
+  name: Facilitate Brainstorming Session
+  version: 2.0
+  description: Interactive brainstorming facilitation with adaptive techniques
+  tags: [brainstorming, facilitation, interactive, creative]
+  
+metadata:
+  author: BMAD Method (Enhanced)
+  created: 2025-07-28
+  framework: super-agents
+  bmadCompatible: true
+  
+config:
+  executionMode: interactive
+  roleMode: facilitator
+  outputTemplate: brainstorming-output-tmpl.yaml
+  defaultOutputLocation: docs/brainstorming-session-results.md
+  
+variables:
+  required:
+    - brainstorming_topic
+  optional:
+    - session_duration
+    - participant_count
+    - output_document
+  defaults:
+    session_duration: 30
+    participant_count: 1
+    output_document: true
+    
+context:
+  facilitatorRole: true
+  continuousEngagement: true
+  captureOutput: true
+  adaptiveTechniques: true
+  
+steps:
+  - id: session_setup
+    name: "Session Setup"
+    type: preparation
+    description: "Gather context and setup brainstorming session"
+    instructions: |
+      Ask 4 context questions (don't preview what happens next):
+      1. What are we brainstorming about?
+      2. Any constraints or parameters?
+      3. Goal: broad exploration or focused ideation?
+      4. Do you want a structured document output to reference later? (Default Yes)
+    prompts:
+      - type: input
+        message: "What are we brainstorming about?"
+        variable: brainstorming_topic
+        required: true
+      - type: input
+        message: "Any constraints or parameters?"
+        variable: constraints
+        optional: true
+      - type: choice
+        message: "Goal: broad exploration or focused ideation?"
+        options: [broad_exploration, focused_ideation]
+        variable: session_goal
+      - type: confirm
+        message: "Do you want a structured document output to reference later?"
+        variable: output_document
+        default: true
+    outputs:
+      - session_context
+      - user_preferences
+      
+  - id: approach_selection
+    name: "Present Approach Options"
+    type: selection
+    description: "Let user choose brainstorming approach"
+    instructions: |
+      After getting answers to Step 1, present 4 approach options (numbered):
+      1. User selects specific techniques
+      2. Analyst recommends techniques based on context
+      3. Random technique selection for creative variety
+      4. Progressive technique flow (start broad, narrow down)
+    prompts:
+      - type: choice
+        message: "Select your preferred brainstorming approach:"
+        options:
+          1: "User selects specific techniques"
+          2: "Analyst recommends techniques based on context"
+          3: "Random technique selection for creative variety"
+          4: "Progressive technique flow (start broad, narrow down)"
+        variable: approach_selection
+        required: true
+    outputs:
+      - selected_approach
+      - technique_strategy
+      
+  - id: technique_execution
+    name: "Execute Techniques Interactively"
+    type: iterative
+    description: "Apply brainstorming techniques with continuous user engagement"
+    instructions: |
+      KEY PRINCIPLES:
+      - FACILITATOR ROLE: Guide user to generate their own ideas through questions, prompts, and examples
+      - CONTINUOUS ENGAGEMENT: Keep user engaged with chosen technique until they want to switch or are satisfied  
+      - CAPTURE OUTPUT: If document output requested, capture all ideas generated in each technique section
+      
+      TECHNIQUE SELECTION:
+      If user selected Option 1, present numbered list of techniques from brainstorming-techniques data.
+      User can select by number.
+    
+    techniques:
+      mind_mapping:
+        name: "Mind Mapping"
+        description: "Visual idea exploration with central topic and branching concepts"
+        facilitation: "Start with central topic, ask for related concepts, build branches"
+        
+      brainstorming_6_3_5:
+        name: "6-3-5 Brainwriting"
+        description: "Rapid idea generation with timed rounds"
+        facilitation: "6 minutes, 3 ideas, build on previous ideas"
+        
+      scamper:
+        name: "SCAMPER Technique"
+        description: "Systematic creative thinking using prompts"
+        prompts: [Substitute, Combine, Adapt, Modify, Put_to_other_uses, Eliminate, Reverse]
+        
+      worst_possible_idea:
+        name: "Worst Possible Idea"
+        description: "Generate terrible ideas to break mental blocks"
+        facilitation: "Ask for worst ideas first, then flip them into good ones"
+        
+      how_might_we:
+        name: "How Might We"
+        description: "Reframe problems as opportunities"
+        facilitation: "Convert problems into 'How might we...' questions"
+        
+    flow_control:
+      type: continuous
+      condition: "while user engaged"
+      break_on: "user_satisfaction or session_timeout"
+      
+    interaction:
+      engagement_checks:
+        - "Are you ready to try a different technique?"
+        - "Do you want to explore this idea further?"
+        - "Should we switch approaches or continue?"
+        
+    outputs:
+      - generated_ideas
+      - technique_effectiveness
+      - user_insights
+      
+  - id: session_wrap_up
+    name: "Session Wrap-up"
+    type: completion
+    description: "Consolidate ideas and create output document"
+    instructions: |
+      1. Review all generated ideas
+      2. Ask user to identify top ideas or themes
+      3. Organize ideas by categories or priority
+      4. If document output requested, compile using template
+      5. Provide summary and next steps
+    prompts:
+      - type: multiselect
+        message: "Which ideas stood out to you the most?"
+        options: "{{generated_ideas}}"
+        variable: top_ideas
+      - type: input
+        message: "Any final thoughts or refinements?"
+        variable: final_thoughts
+        optional: true
+    outputs:
+      - consolidated_ideas
+      - session_summary
+      - output_document
+      
+interaction_patterns:
+  facilitator_style:
+    - ask_open_questions: true
+    - provide_examples: true
+    - encourage_wild_ideas: true
+    - build_on_ideas: true
+    - stay_focused: true
+    
+  engagement_techniques:
+    - "What else comes to mind when you think about...?"
+    - "That's interesting! Can you expand on that?"
+    - "What if we flipped that completely around?"
+    - "How might someone from a different industry approach this?"
+    
+  transition_phrases:
+    - "Let's try a different angle..."
+    - "Building on that idea..."
+    - "What other possibilities exist?"
+    - "Let's capture that and explore..."
+    
+document_capture:
+  structure:
+    session_info:
+      - topic
+      - date
+      - duration
+      - participants
+    techniques_used:
+      - technique_name
+      - ideas_generated
+      - effectiveness_rating
+    consolidated_output:
+      - all_ideas
+      - top_ideas
+      - categorized_ideas
+      - next_steps
+      
+state_management:
+  session_state:
+    - current_technique
+    - ideas_captured
+    - time_elapsed
+    - user_engagement_level
+  persistence:
+    - save_progress_every: 5_minutes
+    - backup_ideas: true
+    - recovery_enabled: true

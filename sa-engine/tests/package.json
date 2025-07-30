@@ -1,0 +1,55 @@
+{
+  "name": "super-agents-mcp-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive test suite for Super Agents MCP tools",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:e2e": "jest --testPathPattern=e2e",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:performance": "jest --testPathPattern=performance",
+    "benchmark": "node benchmark/run-benchmarks.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@jest/globals": "^29.7.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "mock-fs": "^5.2.0",
+    "nock": "^13.4.0",
+    "sinon": "^17.0.1",
+    "supertest": "^6.3.3",
+    "tmp": "^0.2.1"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "uuid": "^9.0.1",
+    "ws": "^8.16.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "../mcp-server/**/*.js",
+      "!../mcp-server/node_modules/**",
+      "!../mcp-server/test-mcp.js"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "html",
+      "lcov"
+    ],
+    "testTimeout": 30000
+  }
+}

@@ -1,0 +1,350 @@
+bundle:
+  id: team-backend
+  name: Backend Development Team
+  version: 1.0.0
+  description: Specialized team for backend, API, and infrastructure development
+  category: team
+  
+metadata:
+  author: Super Agents Framework
+  created: 2025-07-30
+  framework: super-agents-v1
+  target_audience: Backend development teams
+  project_types: [api, microservices, infrastructure, backend-services]
+  
+configuration:
+  installation_type: backend-focused
+  mcp_integration: true
+  template_integration: true
+  task_management: hierarchical
+  workflow_orchestration: true
+  
+agents:
+  # Core Backend Team
+  - id: pm
+    role: Product Manager
+    priority: high
+    required: true
+    tools: [sa-generate-prd, sa-create-epic, sa-prioritize-features, sa-stakeholder-analysis]
+    templates: [prd-tmpl, brownfield-prd-tmpl]
+    focus: Backend requirements and API specifications
+    
+  - id: architect
+    role: System Architect
+    priority: high
+    required: true
+    tools: [sa-design-system, sa-analyze-brownfield, sa-tech-recommendations, sa-create-architecture]
+    templates: [architecture-tmpl, simple-architecture]
+    focus: Backend architecture, databases, and system design
+    
+  - id: developer
+    role: Backend Developer
+    priority: high
+    required: true
+    tools: [sa-implement-story, sa-run-tests, sa-debug-issue, sa-validate-implementation]
+    templates: [express-api-service-tmpl, jest-unit-test-tmpl]
+    focus: Server-side implementation, APIs, and services
+    
+  - id: qa
+    role: Quality Assurance
+    priority: high
+    required: true
+    tools: [sa-review-code, sa-refactor-code, sa-validate-quality, sa-review-story]
+    templates: [jest-unit-test-tmpl]
+    focus: Backend testing, API validation, and code quality
+    
+  # Supporting Roles
+  - id: analyst
+    role: Business Analyst
+    priority: medium
+    required: false
+    tools: [sa-research-market, sa-create-brief, sa-competitor-analysis]
+    templates: [project-brief-tmpl, competitor-analysis-tmpl]
+    focus: Technical requirements analysis
+    
+  - id: scrum-master
+    role: Scrum Master
+    priority: low
+    required: false
+    tools: [sa-create-story, sa-create-next-story, sa-update-workflow, sa-track-progress]
+    templates: [story-tmpl]
+    focus: Backend development workflow management
+
+workflows:
+  # API Development Workflow
+  api_development:
+    name: API Development
+    description: End-to-end API development and deployment
+    phases:
+      - name: requirements
+        agents: [pm, analyst]
+        tools: [sa-generate-prd, sa-create-brief]
+        templates: [prd-tmpl, project-brief-tmpl]
+        
+      - name: api_design
+        agents: [architect, pm]
+        tools: [sa-design-system, sa-tech-recommendations]
+        templates: [architecture-tmpl]
+        
+      - name: implementation
+        agents: [developer]
+        tools: [sa-implement-story, sa-run-tests]
+        templates: [express-api-service-tmpl]
+        
+      - name: testing
+        agents: [qa, developer]
+        tools: [sa-validate-quality, sa-review-code]
+        templates: [jest-unit-test-tmpl]
+        
+      - name: deployment
+        agents: [developer, architect]
+        tools: [sa-validate-implementation]
+        templates: []
+  
+  # Microservices Development
+  microservices_development:
+    name: Microservices Development
+    description: Development of microservices architecture
+    phases:
+      - name: service_design
+        agents: [architect]
+        tools: [sa-design-system, sa-analyze-brownfield]
+        templates: [architecture-tmpl]
+        
+      - name: service_implementation
+        agents: [developer]
+        tools: [sa-implement-story, sa-debug-issue]
+        templates: [express-api-service-tmpl]
+        
+      - name: integration_testing
+        agents: [qa]
+        tools: [sa-validate-quality, sa-run-tests]
+        templates: [jest-unit-test-tmpl]
+        
+      - name: service_deployment
+        agents: [developer, architect]
+        tools: [sa-validate-implementation]
+        templates: []
+  
+  # Database Development
+  database_development:
+    name: Database Development
+    description: Database design and optimization
+    phases:
+      - name: schema_design
+        agents: [architect, developer]
+        tools: [sa-design-system, sa-tech-recommendations]
+        templates: [architecture-tmpl]
+        
+      - name: implementation
+        agents: [developer]
+        tools: [sa-implement-story]
+        templates: []
+        
+      - name: optimization
+        agents: [developer, qa]
+        tools: [sa-refactor-code, sa-validate-quality]
+        templates: []
+
+tools:
+  # Core Tools
+  core:
+    - sa-initialize-project
+    - sa-list-tasks
+    - sa-get-task
+    - sa-update-task-status
+    
+  # Backend-Specific Tools
+  pm:
+    - sa-generate-prd
+    - sa-create-epic
+    - sa-prioritize-features
+    - sa-stakeholder-analysis
+    
+  architect:
+    - sa-design-system
+    - sa-analyze-brownfield
+    - sa-tech-recommendations
+    - sa-create-architecture
+    
+  developer:
+    - sa-implement-story
+    - sa-run-tests
+    - sa-debug-issue
+    - sa-validate-implementation
+    
+  qa:
+    - sa-review-code
+    - sa-refactor-code
+    - sa-validate-quality
+    - sa-review-story
+    
+  # Supporting Tools
+  analyst:
+    - sa-research-market
+    - sa-create-brief
+    - sa-competitor-analysis
+    
+  scrum_master:
+    - sa-create-story
+    - sa-create-next-story
+    - sa-track-progress
+    
+  # Task Management
+  task_master:
+    - sa-parse-prd
+    - sa-expand-task
+    - sa-analyze-complexity
+    - sa-generate-tasks
+    
+  # Dependencies
+  dependencies:
+    - sa-add-dependency
+    - sa-remove-dependency
+    - sa-validate-dependencies
+    - sa-dependency-graph
+
+templates:
+  # Backend-Focused Templates
+  backend:
+    - express-api-service-tmpl
+    - jest-unit-test-tmpl
+    - architecture-tmpl
+    - simple-architecture
+    
+  # Documentation
+  documentation:
+    - prd-tmpl
+    - brownfield-prd-tmpl
+    - project-brief-tmpl
+    
+  # Process
+  process:
+    - story-tmpl
+
+technology_focus:
+  backend_frameworks:
+    - Express.js
+    - Fastify
+    - NestJS
+    - Koa.js
+    
+  databases:
+    - PostgreSQL
+    - MongoDB
+    - Redis
+    - MySQL
+    
+  infrastructure:
+    - Docker
+    - Kubernetes
+    - AWS
+    - Azure
+    
+  testing:
+    - Jest
+    - Mocha
+    - Supertest
+    - Postman
+
+ide_integrations:
+  claude_code:
+    mcp_server: true
+    memory_file: true
+    agents: [pm, architect, developer, qa]
+    
+  cursor:
+    rules_files: true
+    agents: [pm, architect, developer, qa]
+    
+  vscode:
+    workspace_settings: true
+    code_snippets: true
+    agents: [pm, architect, developer, qa]
+
+installation:
+  prerequisites:
+    - node_js: ">=18.0.0"
+    - npm: ">=8.0.0"
+    - git: ">=2.0.0"
+    
+  backend_tools:
+    - docker: ">=20.0.0"
+    - postman: optional
+    - database_client: recommended
+    
+  setup_focus:
+    - API development tools
+    - Database integration
+    - Testing frameworks
+    - Deployment pipelines
+
+usage_examples:
+  api_project:
+    description: Create a REST API project
+    commands:
+      - sa_initialize_project
+      - sa_generate_prd
+      - sa_design_system
+      - sa_implement_story
+      
+  microservice:
+    description: Develop a microservice
+    commands:
+      - sa_analyze_brownfield
+      - sa_tech_recommendations
+      - sa_implement_story
+      - sa_validate_quality
+      
+  database_optimization:
+    description: Optimize database performance
+    commands:
+      - sa_analyze_brownfield
+      - sa_refactor_code
+      - sa_validate_implementation
+
+best_practices:
+  backend_development:
+    - Follow RESTful API design principles
+    - Implement proper error handling
+    - Use appropriate HTTP status codes
+    - Implement authentication and authorization
+    - Write comprehensive API documentation
+    
+  database_design:
+    - Normalize database schema appropriately
+    - Use proper indexing strategies
+    - Implement data validation
+    - Plan for scalability
+    - Consider backup and recovery
+    
+  testing:
+    - Write unit tests for business logic
+    - Implement integration tests for APIs
+    - Use test databases for testing
+    - Mock external dependencies
+    - Achieve good test coverage
+    
+  code_quality:
+    - Follow consistent coding standards
+    - Use proper error handling
+    - Implement logging and monitoring
+    - Use environment-specific configurations
+    - Follow security best practices
+
+excluded_components:
+  # Frontend-specific agents and tools not included
+  frontend_agents:
+    - ux-expert
+    
+  frontend_tools:
+    - sa-create-frontend-spec
+    - sa-generate-ui-prompt
+    - sa-design-wireframes
+    - sa-accessibility-audit
+    
+  frontend_templates:
+    - front-end-spec-tmpl
+    - front-end-architecture-tmpl
+    - react-component-tmpl
+    - react-typescript-component-tmpl

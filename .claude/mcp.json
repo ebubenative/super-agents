@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "super-agents": {
+      "command": "node",
+      "args": [
+        "/home/ebube/PROJECTS/super-agents/sa-engine/mcp-server/index.js"
+      ],
+      "env": {
+        "SA_PROJECT_ROOT": "/home/ebube/PROJECTS/super-agents",
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "SA_LOG_LEVEL": "info"
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+template:
+  id: react-typescript-component-template
+  name: React TypeScript Functional Component
+  version: "1.0"
+  description: Template for generating React TypeScript functional components
+  tags: [react, component, frontend, typescript]
+  extends: react-component-simple-template
+  output:
+    format: text
+    filename: "{{componentName}}.tsx"
+
+variables:
+  defaults:
+    typescript: true
+
+inheritance:
+  overrides:
+    type-definitions:
+      required: true

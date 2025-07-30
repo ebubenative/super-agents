@@ -1,0 +1,415 @@
+bundle:
+  id: team-frontend
+  name: Frontend Development Team
+  version: 1.0.0
+  description: Specialized team for frontend, UI/UX, and client-side development
+  category: team
+  
+metadata:
+  author: Super Agents Framework
+  created: 2025-07-30
+  framework: super-agents-v1
+  target_audience: Frontend development teams
+  project_types: [web-app, spa, mobile-app, ui-library, component-library]
+  
+configuration:
+  installation_type: frontend-focused
+  mcp_integration: true
+  template_integration: true
+  task_management: hierarchical
+  workflow_orchestration: true
+  
+agents:
+  # Core Frontend Team
+  - id: ux-expert
+    role: UX/UI Expert
+    priority: high
+    required: true
+    tools: [sa-create-frontend-spec, sa-generate-ui-prompt, sa-design-wireframes, sa-accessibility-audit]
+    templates: [front-end-spec-tmpl, front-end-architecture-tmpl]
+    focus: User experience design and interface architecture
+    
+  - id: developer
+    role: Frontend Developer
+    priority: high
+    required: true
+    tools: [sa-implement-story, sa-run-tests, sa-debug-issue, sa-validate-implementation]
+    templates: [react-component-tmpl, react-typescript-component-tmpl, jest-unit-test-tmpl]
+    focus: Client-side implementation and component development
+    
+  - id: qa
+    role: Quality Assurance
+    priority: high
+    required: true
+    tools: [sa-review-code, sa-refactor-code, sa-validate-quality, sa-review-story]
+    templates: [jest-unit-test-tmpl]
+    focus: Frontend testing, accessibility, and user experience validation
+    
+  - id: product-owner
+    role: Product Owner
+    priority: high
+    required: true
+    tools: [sa-execute-checklist, sa-shard-document, sa-validate-story-draft, sa-correct-course]
+    templates: [story-tmpl]
+    focus: User story validation and feature acceptance
+    
+  # Supporting Roles
+  - id: pm
+    role: Product Manager
+    priority: medium
+    required: false
+    tools: [sa-generate-prd, sa-create-epic, sa-prioritize-features]
+    templates: [prd-tmpl]
+    focus: Frontend feature requirements and user journey mapping
+    
+  - id: architect
+    role: System Architect
+    priority: medium
+    required: false
+    tools: [sa-design-system, sa-tech-recommendations, sa-create-architecture]
+    templates: [front-end-architecture-tmpl]
+    focus: Frontend architecture and component system design
+    
+  - id: scrum-master
+    role: Scrum Master
+    priority: low
+    required: false
+    tools: [sa-create-story, sa-create-next-story, sa-update-workflow, sa-track-progress]
+    templates: [story-tmpl]
+    focus: Frontend development workflow and sprint management
+
+workflows:
+  # UI/UX Development Workflow
+  ui_development:
+    name: UI/UX Development
+    description: Complete user interface development cycle
+    phases:
+      - name: user_research
+        agents: [ux-expert, product-owner]
+        tools: [sa-design-wireframes]
+        templates: [front-end-spec-tmpl]
+        
+      - name: design_system
+        agents: [ux-expert, architect]
+        tools: [sa-create-frontend-spec, sa-design-system]
+        templates: [front-end-spec-tmpl, front-end-architecture-tmpl]
+        
+      - name: component_development
+        agents: [developer]
+        tools: [sa-implement-story, sa-generate-ui-prompt]
+        templates: [react-component-tmpl, react-typescript-component-tmpl]
+        
+      - name: testing_validation
+        agents: [qa, ux-expert]
+        tools: [sa-validate-quality, sa-accessibility-audit]
+        templates: [jest-unit-test-tmpl]
+        
+      - name: user_acceptance
+        agents: [product-owner]
+        tools: [sa-validate-story-draft, sa-correct-course]
+        templates: [story-tmpl]
+  
+  # Component Library Development
+  component_library:
+    name: Component Library Development
+    description: Development of reusable UI component library
+    phases:
+      - name: component_design
+        agents: [ux-expert]
+        tools: [sa-create-frontend-spec, sa-design-wireframes]
+        templates: [front-end-spec-tmpl]
+        
+      - name: component_implementation
+        agents: [developer]
+        tools: [sa-implement-story]
+        templates: [react-component-tmpl, react-typescript-component-tmpl]
+        
+      - name: documentation
+        agents: [developer, ux-expert]
+        tools: [sa-generate-ui-prompt]
+        templates: [front-end-spec-tmpl]
+        
+      - name: testing
+        agents: [qa]
+        tools: [sa-validate-quality, sa-accessibility-audit]
+        templates: [jest-unit-test-tmpl]
+  
+  # Responsive Design Implementation
+  responsive_development:
+    name: Responsive Design Implementation
+    description: Multi-device responsive design development
+    phases:
+      - name: breakpoint_design
+        agents: [ux-expert]
+        tools: [sa-design-wireframes, sa-create-frontend-spec]
+        templates: [front-end-spec-tmpl]
+        
+      - name: responsive_implementation
+        agents: [developer]
+        tools: [sa-implement-story]
+        templates: [react-component-tmpl]
+        
+      - name: device_testing
+        agents: [qa]
+        tools: [sa-validate-quality]
+        templates: []
+        
+      - name: accessibility_audit
+        agents: [ux-expert, qa]
+        tools: [sa-accessibility-audit]
+        templates: []
+
+tools:
+  # Core Tools
+  core:
+    - sa-initialize-project
+    - sa-list-tasks
+    - sa-get-task
+    - sa-update-task-status
+    
+  # Frontend-Specific Tools
+  ux_expert:
+    - sa-create-frontend-spec
+    - sa-generate-ui-prompt
+    - sa-design-wireframes
+    - sa-accessibility-audit
+    
+  developer:
+    - sa-implement-story
+    - sa-run-tests
+    - sa-debug-issue
+    - sa-validate-implementation
+    
+  qa:
+    - sa-review-code
+    - sa-refactor-code
+    - sa-validate-quality
+    - sa-review-story
+    
+  product_owner:
+    - sa-execute-checklist
+    - sa-shard-document
+    - sa-validate-story-draft
+    - sa-correct-course
+    
+  # Supporting Tools
+  pm:
+    - sa-generate-prd
+    - sa-create-epic
+    - sa-prioritize-features
+    
+  architect:
+    - sa-design-system
+    - sa-tech-recommendations
+    - sa-create-architecture
+    
+  scrum_master:
+    - sa-create-story
+    - sa-create-next-story
+    - sa-track-progress
+    
+  # Task Management
+  task_master:
+    - sa-parse-prd
+    - sa-expand-task
+    - sa-analyze-complexity
+    - sa-generate-tasks
+
+templates:
+  # Frontend-Focused Templates
+  frontend:
+    - react-component-tmpl
+    - react-typescript-component-tmpl
+    - front-end-spec-tmpl
+    - front-end-architecture-tmpl
+    - jest-unit-test-tmpl
+    
+  # Documentation
+  documentation:
+    - prd-tmpl
+    - project-brief-tmpl
+    
+  # Process
+  process:
+    - story-tmpl
+
+technology_focus:
+  frontend_frameworks:
+    - React
+    - Vue.js
+    - Angular
+    - Svelte
+    - Next.js
+    - Nuxt.js
+    
+  styling:
+    - CSS3
+    - Sass/SCSS
+    - Styled Components
+    - Tailwind CSS
+    - Material-UI
+    - Chakra UI
+    
+  build_tools:
+    - Webpack
+    - Vite
+    - Parcel
+    - Rollup
+    
+  testing:
+    - Jest
+    - React Testing Library
+    - Cypress
+    - Playwright
+    - Storybook
+    
+  state_management:
+    - Redux
+    - Zustand
+    - Context API
+    - Vuex
+    - Pinia
+
+design_systems:
+  components:
+    - Buttons and inputs
+    - Navigation components
+    - Layout components
+    - Data display components
+    - Feedback components
+    
+  design_tokens:
+    - Color palettes
+    - Typography scales
+    - Spacing systems
+    - Border radius
+    - Shadows and elevation
+    
+  accessibility:
+    - WCAG compliance
+    - Screen reader support
+    - Keyboard navigation
+    - Color contrast
+    - Focus management
+
+ide_integrations:
+  claude_code:
+    mcp_server: true
+    memory_file: true
+    agents: [ux-expert, developer, qa, product-owner]
+    
+  cursor:
+    rules_files: true
+    agents: [ux-expert, developer, qa, product-owner]
+    
+  vscode:
+    workspace_settings: true
+    code_snippets: true
+    agents: [ux-expert, developer, qa, product-owner]
+
+installation:
+  prerequisites:
+    - node_js: ">=18.0.0"
+    - npm: ">=8.0.0"
+    - git: ">=2.0.0"
+    
+  frontend_tools:
+    - browser_dev_tools: required
+    - design_tools: recommended
+    - bundler: webpack_or_vite
+    
+  setup_focus:
+    - Component development environment
+    - Design system setup
+    - Testing frameworks
+    - Build and deployment tools
+
+usage_examples:
+  component_development:
+    description: Create a reusable React component
+    commands:
+      - sa_create_frontend_spec
+      - sa_implement_story
+      - sa_validate_quality
+      - sa_accessibility_audit
+      
+  design_system:
+    description: Build a design system
+    commands:
+      - sa_design_wireframes
+      - sa_create_frontend_spec
+      - sa_design_system
+      - sa_implement_story
+      
+  responsive_design:
+    description: Implement responsive design
+    commands:
+      - sa_create_frontend_spec
+      - sa_implement_story
+      - sa_validate_quality
+
+best_practices:
+  ui_ux_design:
+    - Follow design system principles
+    - Ensure consistency across components
+    - Design for accessibility from the start
+    - Consider mobile-first approach
+    - Use semantic HTML elements
+    
+  component_development:
+    - Create reusable, composable components
+    - Follow single responsibility principle
+    - Implement proper prop validation
+    - Use TypeScript for type safety
+    - Write comprehensive tests
+    
+  performance:
+    - Optimize bundle size
+    - Implement lazy loading
+    - Use proper caching strategies
+    - Optimize images and assets
+    - Monitor Core Web Vitals
+    
+  accessibility:
+    - Ensure keyboard navigation
+    - Provide proper ARIA labels
+    - Maintain color contrast ratios
+    - Support screen readers
+    - Test with assistive technologies
+    
+  testing:
+    - Write unit tests for components
+    - Implement integration tests
+    - Use visual regression testing
+    - Test accessibility compliance
+    - Perform cross-browser testing
+
+excluded_components:
+  # Backend-specific agents and tools not included
+  backend_agents:
+    - analyst (business-focused)
+    
+  backend_tools:
+    - sa-research-market
+    - sa-brainstorm-session
+    - sa-competitor-analysis
+    - sa-analyze-brownfield
+    
+  backend_templates:
+    - express-api-service-tmpl
+    - architecture-tmpl (backend-focused)
+    - market-research-tmpl
+    - competitor-analysis-tmpl
+
+mobile_considerations:
+  react_native:
+    - Component adaptation for mobile
+    - Navigation patterns
+    - Platform-specific features
+    - Performance optimization
+    
+  responsive_design:
+    - Mobile-first approach
+    - Touch-friendly interfaces
+    - Adaptive layouts
+    - Progressive Web App features

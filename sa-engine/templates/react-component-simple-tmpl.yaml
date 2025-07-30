@@ -1,0 +1,62 @@
+template:
+  id: react-component-simple-template
+  name: React Functional Component (Simple)
+  version: "1.0"
+  description: Simplified React component template without complex JavaScript
+  tags: [react, component, frontend, javascript]
+  output:
+    format: text
+    filename: "{{componentName}}.jsx"
+
+metadata:
+  author: super-agents
+  framework: react
+  created: 2025-01-29
+
+variables:
+  required: [componentName]
+  optional: [typescript, comments, storyTitle]
+  defaults:
+    typescript: false
+    comments: true
+
+sections:
+  - id: component-code
+    content: |
+      import React, { useState, useEffect } from 'react';
+      {{#if typescript}}import { FC } from 'react';{{/if}}
+      
+      {{#if comments}}
+      /**
+       * {{componentName}} Component
+       {{#if storyTitle}}* {{storyTitle}}{{/if}}
+       */
+      {{/if}}
+      const {{componentName}}{{#if typescript}}: FC{{/if}} = () => {
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState(null);
+      
+        useEffect(() => {
+          {{#if comments}}// Component initialization logic{{/if}}
+        }, []);
+      
+        const handleAction = async () => {
+          setLoading(true);
+          try {
+            {{#if comments}}// TODO: Implement action handler{{/if}}
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setLoading(false);
+          }
+        };
+      
+        return (
+          <div className="{{toLowerCase componentName}}">
+            <h2>{{componentName}}</h2>
+            <button onClick={handleAction}>Action</button>
+          </div>
+        );
+      };
+      
+      export default {{componentName}};

@@ -1,0 +1,115 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2025-07-28T23:29:18.416Z",
+    "modified": "2025-07-28T23:30:51.109Z",
+    "framework": "super-agents",
+    "totalTasks": 2,
+    "maxDepth": 1
+  },
+  "configuration": {
+    "taggedLists": true,
+    "defaultTag": "main",
+    "statusTransitions": {
+      "pending": [
+        "in-progress",
+        "deferred",
+        "cancelled"
+      ],
+      "in-progress": [
+        "blocked",
+        "review",
+        "done",
+        "deferred",
+        "cancelled"
+      ],
+      "blocked": [
+        "in-progress",
+        "deferred",
+        "cancelled"
+      ],
+      "review": [
+        "in-progress",
+        "done",
+        "deferred"
+      ],
+      "done": [],
+      "deferred": [
+        "pending",
+        "cancelled"
+      ],
+      "cancelled": []
+    },
+    "autoNumbering": true,
+    "dependencyValidation": true
+  },
+  "tags": {
+    "main": {
+      "name": "Main Tasks",
+      "description": "Primary task list",
+      "tasks": [
+        {
+          "id": "1",
+          "title": "Implement user authentication",
+          "description": "Add JWT-based authentication system",
+          "status": "in-progress",
+          "priority": "high",
+          "type": "feature",
+          "dependencies": [],
+          "blockedBy": [],
+          "blocks": [],
+          "metadata": {
+            "created": "2025-07-28T23:30:11.208Z",
+            "modified": "2025-07-28T23:30:51.104Z",
+            "version": "1.0.0",
+            "framework": "super-agents"
+          },
+          "tags": [],
+          "labels": [],
+          "acceptanceCriteria": [],
+          "subtasks": [],
+          "resources": {
+            "files": [],
+            "urls": [],
+            "documents": [],
+            "tools": []
+          }
+        },
+        {
+          "id": "2",
+          "title": "Setup database schema",
+          "description": "Create user tables and indexes",
+          "status": "pending",
+          "priority": "high",
+          "type": "infrastructure",
+          "dependencies": [
+            "1"
+          ],
+          "blockedBy": [],
+          "blocks": [],
+          "metadata": {
+            "created": "2025-07-28T23:30:16.382Z",
+            "modified": "2025-07-28T23:30:16.382Z",
+            "version": "1.0.0",
+            "framework": "super-agents"
+          },
+          "tags": [],
+          "labels": [],
+          "acceptanceCriteria": [],
+          "subtasks": [],
+          "resources": {
+            "files": [],
+            "urls": [],
+            "documents": [],
+            "tools": []
+          }
+        }
+      ],
+      "metadata": {
+        "created": "2025-07-28T23:29:18.416Z",
+        "modified": "2025-07-28T23:30:51.109Z",
+        "taskCount": 2
+      }
+    }
+  }
+}

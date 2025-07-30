@@ -1,0 +1,350 @@
+bundle:
+  id: team-minimal
+  name: Minimal Development Team
+  version: 1.0.0
+  description: Essential agents for small teams and lean development
+  category: team
+  
+metadata:
+  author: Super Agents Framework
+  created: 2025-07-30
+  framework: super-agents-v1
+  target_audience: Small teams, startups, individual developers
+  project_types: [mvp, prototype, small-project, solo-development]
+  
+configuration:
+  installation_type: minimal
+  mcp_integration: true
+  template_integration: basic
+  task_management: simple
+  workflow_orchestration: false
+  
+agents:
+  # Essential Core Team (Only Required Agents)
+  - id: pm
+    role: Product Manager
+    priority: high
+    required: true
+    tools: [sa-generate-prd, sa-create-epic, sa-prioritize-features]
+    templates: [prd-tmpl, project-brief-tmpl]
+    focus: Requirements gathering and feature prioritization
+    note: Handles product planning and requirements
+    
+  - id: developer
+    role: Full-Stack Developer
+    priority: high
+    required: true
+    tools: [sa-implement-story, sa-run-tests, sa-debug-issue, sa-validate-implementation]
+    templates: [react-component-tmpl, express-api-service-tmpl, jest-unit-test-tmpl]
+    focus: Complete application development (frontend + backend)
+    note: Primary development role covering all technical aspects
+    
+  - id: qa
+    role: Quality Assurance
+    priority: high
+    required: true
+    tools: [sa-review-code, sa-validate-quality, sa-review-story]
+    templates: [jest-unit-test-tmpl]
+    focus: Code quality, testing, and validation
+    note: Ensures quality and handles testing responsibilities
+
+workflows:
+  # Simplified Development Workflow
+  lean_development:
+    name: Lean Development
+    description: Streamlined development process for small teams
+    phases:
+      - name: planning
+        agents: [pm]
+        tools: [sa-generate-prd, sa-create-epic]
+        templates: [prd-tmpl]
+        duration: short
+        
+      - name: development
+        agents: [developer]
+        tools: [sa-implement-story, sa-run-tests]
+        templates: [react-component-tmpl, express-api-service-tmpl]
+        duration: main
+        
+      - name: validation
+        agents: [qa, pm]
+        tools: [sa-validate-quality, sa-review-code]
+        templates: [jest-unit-test-tmpl]
+        duration: short
+  
+  # MVP Development
+  mvp_development:
+    name: MVP Development
+    description: Minimum viable product development cycle
+    phases:
+      - name: core_features
+        agents: [pm, developer]
+        tools: [sa-prioritize-features, sa-implement-story]
+        templates: [prd-tmpl]
+        
+      - name: basic_testing
+        agents: [qa, developer]
+        tools: [sa-validate-quality, sa-run-tests]
+        templates: [jest-unit-test-tmpl]
+        
+      - name: deployment_ready
+        agents: [developer]
+        tools: [sa-validate-implementation]
+        templates: []
+
+tools:
+  # Core Tools (Always Included)
+  core:
+    - sa-initialize-project
+    - sa-list-tasks
+    - sa-get-task
+    - sa-update-task-status
+    
+  # Essential Agent Tools
+  pm:
+    - sa-generate-prd
+    - sa-create-epic
+    - sa-prioritize-features
+    
+  developer:
+    - sa-implement-story
+    - sa-run-tests
+    - sa-debug-issue
+    - sa-validate-implementation
+    
+  qa:
+    - sa-review-code
+    - sa-validate-quality
+    - sa-review-story
+    
+  # Basic Task Management
+  task_master:
+    - sa-expand-task
+    - sa-analyze-complexity
+
+templates:
+  # Essential Templates Only
+  essential:
+    - prd-tmpl
+    - project-brief-tmpl
+    - react-component-tmpl
+    - express-api-service-tmpl
+    - jest-unit-test-tmpl
+    - story-tmpl
+
+team_structure:
+  roles:
+    product_manager:
+      responsibilities:
+        - Define product requirements
+        - Prioritize features
+        - Create user stories
+        - Manage product backlog
+      tools: [sa-generate-prd, sa-create-epic, sa-prioritize-features]
+      
+    developer:
+      responsibilities:
+        - Full-stack development
+        - Frontend implementation
+        - Backend/API development
+        - Testing implementation
+        - Deployment and DevOps
+      tools: [sa-implement-story, sa-run-tests, sa-debug-issue, sa-validate-implementation]
+      
+    qa:
+      responsibilities:
+        - Code review
+        - Quality validation
+        - Test strategy
+        - Bug identification
+      tools: [sa-review-code, sa-validate-quality, sa-review-story]
+
+technology_stack:
+  # Simplified technology choices
+  frontend:
+    primary: React
+    styling: CSS/Styled Components
+    build: Vite
+    
+  backend:
+    primary: Node.js/Express
+    database: PostgreSQL/MongoDB
+    testing: Jest
+    
+  deployment:
+    hosting: Vercel/Netlify/Heroku
+    ci_cd: GitHub Actions
+    monitoring: Basic
+
+ide_integrations:
+  claude_code:
+    mcp_server: true
+    memory_file: basic
+    agents: [pm, developer, qa]
+    
+  cursor:
+    rules_files: simplified
+    agents: [pm, developer, qa]
+    
+  vscode:
+    workspace_settings: basic
+    code_snippets: essential
+    agents: [pm, developer, qa]
+
+installation:
+  prerequisites:
+    - node_js: ">=18.0.0"
+    - npm: ">=8.0.0"
+    - git: ">=2.0.0"
+    
+  minimal_setup:
+    - Quick installation script
+    - Basic IDE integration
+    - Essential templates only
+    - Simplified configuration
+    
+  time_to_setup: "< 10 minutes"
+
+usage_examples:
+  startup_project:
+    description: Quick startup project setup
+    commands:
+      - sa_initialize_project
+      - sa_generate_prd
+      - sa_implement_story
+      - sa_validate_quality
+      
+  feature_development:
+    description: Develop a new feature quickly
+    commands:
+      - sa_create_epic
+      - sa_implement_story
+      - sa_review_code
+      
+  bug_fix:
+    description: Fix a bug and validate
+    commands:
+      - sa_debug_issue
+      - sa_validate_implementation
+      - sa_review_code
+
+best_practices:
+  lean_development:
+    - Focus on core functionality first
+    - Keep scope minimal and achievable
+    - Iterate quickly based on feedback
+    - Maintain simple architecture
+    - Avoid over-engineering
+    
+  quality_with_speed:
+    - Write tests for critical functionality
+    - Use automated code review
+    - Keep code simple and readable
+    - Deploy frequently in small increments
+    - Monitor basic metrics
+    
+  team_collaboration:
+    - Keep communication channels simple
+    - Use clear, actionable tasks
+    - Regular but brief check-ins
+    - Shared responsibility for quality
+    - Focus on delivering value
+
+advantages:
+  speed:
+    - Faster setup and onboarding
+    - Reduced decision paralysis
+    - Streamlined workflows
+    - Quick iteration cycles
+    
+  simplicity:
+    - Fewer tools to learn
+    - Clear role definitions
+    - Simple process flows
+    - Minimal overhead
+    
+  cost_effectiveness:
+    - Lower complexity = lower costs
+    - Faster time to market
+    - Reduced learning curve
+    - Essential features only
+
+limitations:
+  scalability:
+    - May need expansion for larger projects
+    - Limited specialized expertise
+    - Fewer workflow options
+    - Basic orchestration only
+    
+  complexity_handling:
+    - May struggle with complex architectures
+    - Limited specialized tooling
+    - Fewer review perspectives
+    - Basic template options
+
+upgrade_path:
+  to_fullstack:
+    - Add architect agent
+    - Add ux-expert agent
+    - Include more templates
+    - Enable workflow orchestration
+    
+  to_backend:
+    - Add analyst agent
+    - Include backend-specific templates
+    - Add infrastructure tools
+    
+  to_frontend:
+    - Add ux-expert agent
+    - Add product-owner agent
+    - Include design templates
+    - Add accessibility tools
+
+excluded_components:
+  # Advanced agents not included in minimal bundle
+  advanced_agents:
+    - analyst
+    - architect
+    - ux-expert
+    - product-owner
+    - scrum-master
+    - bmad-master
+    - bmad-orchestrator
+    
+  # Advanced tools not included
+  advanced_tools:
+    - sa-research-market
+    - sa-brainstorm-session
+    - sa-competitor-analysis
+    - sa-design-system
+    - sa-analyze-brownfield
+    - sa-create-frontend-spec
+    - sa-design-wireframes
+    - sa-accessibility-audit
+    - sa-execute-checklist
+    - sa-shard-document
+    - sa-start-workflow
+    - sa-workflow-status
+    
+  # Advanced templates not included
+  advanced_templates:
+    - market-research-tmpl
+    - competitor-analysis-tmpl
+    - architecture-tmpl
+    - front-end-spec-tmpl
+    - front-end-architecture-tmpl
+    - brownfield-prd-tmpl
+    - brainstorming-output-tmpl
+
+support:
+  documentation:
+    - Quick start guide
+    - Essential agent reference
+    - Basic troubleshooting
+    - Upgrade guides
+    
+  community:
+    - Minimal bundle discussions
+    - Startup use cases
+    - Performance optimization
+    - Growth strategies

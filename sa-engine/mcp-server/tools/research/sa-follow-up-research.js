@@ -1,0 +1,279 @@
+import ResearchEngine from '../../../research/ResearchEngine.js';
+
+/**
+ * Super Agents Follow-up Research Tool - Continue research conversations with context
+ * Performs follow-up research queries maintaining conversation context and history
+ */
+
+const toolDefinition = {
+  name: 'sa-follow-up-research',
+  description: 'Continue research conversations with previous context and perform follow-up queries',
+  category: 'research',
+  
+  inputSchema: {
+    type: 'object',
+    properties: {
+      followUpQuery: {
+        type: 'string',
+        description: 'Follow-up research query building on previous research'
+      },
+      previousQuery: {
+        type: 'string',
+        description: 'Previous research query for context (if not maintaining session)'
+      },
+      sessionId: {
+        type: 'string',
+        description: 'Research session ID to continue (optional)'
+      },
+      additionalContext: {
+        type: 'string',
+        description: 'Additional context for the follow-up query'
+      },
+      taskIds: {
+        type: 'array',
+        items: { type: 'string' },
+        description: 'Additional task IDs to include for follow-up context'
+      },
+      filePaths: {
+        type: 'array',
+        items: { type: 'string' },
+        description: 'Additional file paths to include for follow-up context'
+      },
+      detailLevel: {
+        type: 'string',
+        enum: ['low', 'medium', 'high'],
+        description: 'Detail level for the follow-up response (default: medium)'
+      },
+      refreshTaskDiscovery: {
+        type: 'boolean',
+        description: 'Re-discover relevant tasks for the follow-up query (default: true)'
+      },
+      saveToFile: {
+        type: 'boolean',
+        description: 'Save the complete conversation to file (default: false)'
+      },
+      temperature: {
+        type: 'number',
+        description: 'AI temperature for follow-up query (0.0-1.0, default: 0.7)'
+      }
+    },
+    required: ['followUpQuery']
+  },
+
+  async execute(args, context = {}) {
+    try {
+      const {
+        followUpQuery,
+        previousQuery,
+        sessionId,
+        additionalContext = '',
+        taskIds = [],
+        filePaths = [],
+        detailLevel = 'medium',
+        refreshTaskDiscovery = true,
+        saveToFile = false,
+        temperature = 0.7
+      } = args;
+
+      // Get or create research engine instance
+      let researchEngine = context.researchEngine;
+      
+      if (!researchEngine) {
+        researchEngine = new ResearchEngine({
+          projectRoot: process.cwd(),
+          enableFollowUp: true,
+          enableSaveToFile: true,
+          researchDirectory: '.super-agents/research'
+        });
+
+        // Set AI provider if available
+        if (context.aiProvider) {
+          researchEngine.setAIProvider(context.aiProvider);
+        }
+      }
+
+      // If we have a previous query but no session, simulate initial research
+      if (previousQuery && !sessionId) {
+        // Add previous context to conversation history manually
+        researchEngine.conversationHistory.push({
+          type: 'initial',
+          query: previousQuery,
+          result: {
+            query: previousQuery,
+            result: '(Previous research context - details not available)',
+            timestamp: new Date().toISOString()
+          },
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // Prepare follow-up options
+      const followUpOptions = {
+        taskIds,
+        filePaths,
+        customContext: additionalContext,
+        detailLevel,
+        autoDiscoverTasks: refreshTaskDiscovery,
+        saveToFile,
+        temperature
+      };
+
+      // Perform follow-up research
+      const result = await researchEngine.performFollowUp(followUpQuery, followUpOptions);
+
+      // Get conversation history for context
+      const conversationHistory = researchEngine.getHistory();
+      const conversationLength = conversationHistory.length;
+
+      // Format response for MCP
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `# Follow-up Research Results
+
+## Follow-up Query
+${followUpQuery}
+
+## Response
+${result.result}
+
+## Conversation Context
+- **Conversation Length**: ${conversationLength} exchanges
+- **Previous Queries**: ${conversationHistory.slice(0, -1).map(h => `"${h.query}"`).join(', ') || 'None'}
+
+## Context Analysis
+- **Sources**: ${result.sources.tasks} tasks, ${result.sources.files} files${result.sources.projectTree ? ', project tree' : ''}
+- **Context Size**: ${result.contextSize} characters (${result.contextTokens} tokens)
+- **Detail Level**: ${result.detailLevel}
+- **Auto-discovered Tasks**: ${result.discoveredTasks.join(', ') || 'None'}
+
+${result.savedFilePath ? `\n**Conversation Saved**: ${result.savedFilePath}` : ''}
+${result.metadata.tokenUsage ? `\n**AI Token Usage**: ${JSON.stringify(result.metadata.tokenUsage)}` : ''}
+
+---
+*Generated by Super Agents Follow-up Research*`
+          }
+        ],
+        isError: false,
+        metadata: {
+          toolName: 'sa-follow-up-research',
+          followUpQuery,
+          conversationLength,
+          contextTokens: result.contextTokens,
+          discoveredTasks: result.discoveredTasks,
+          detailLevel: result.detailLevel,
+          sources: result.sources,
+          timestamp: result.metadata.timestamp,
+          savedFilePath: result.savedFilePath || null,
+          sessionId: sessionId || null
+        }
+      };
+
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Error performing follow-up research: ${error.message}`
+          }
+        ],
+        isError: true,
+        metadata: {
+          toolName: 'sa-follow-up-research',
+          error: error.message
+        }
+      };
+    }
+  },
+
+  // Validation function for input parameters
+  validate(args) {
+    const errors = [];
+    
+    if (!args.followUpQuery || typeof args.followUpQuery !== 'string' || args.followUpQuery.trim().length === 0) {
+      errors.push('Follow-up query is required and must be a non-empty string');
+    }
+
+    if (args.followUpQuery && args.followUpQuery.length > 1000) {
+      errors.push('Follow-up query must be less than 1000 characters');
+    }
+
+    if (args.taskIds && !Array.isArray(args.taskIds)) {
+      errors.push('taskIds must be an array of strings');
+    }
+
+    if (args.filePaths && !Array.isArray(args.filePaths)) {
+      errors.push('filePaths must be an array of strings');
+    }
+
+    if (args.detailLevel && !['low', 'medium', 'high'].includes(args.detailLevel)) {
+      errors.push('detailLevel must be one of: low, medium, high');
+    }
+
+    if (args.temperature && (typeof args.temperature !== 'number' || args.temperature < 0 || args.temperature > 1)) {
+      errors.push('temperature must be a number between 0.0 and 1.0');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  },
+
+  // Example usage
+  examples: [
+    {
+      title: 'Continue Research Conversation',
+      description: 'Ask a follow-up question to previous research',
+      input: {
+        followUpQuery: 'How would you implement the JWT authentication you mentioned?',
+        detailLevel: 'high'
+      }
+    },
+    {
+      title: 'Follow-up with Additional Context',
+      description: 'Follow-up query with new context and files',
+      input: {
+        followUpQuery: 'Given the security concerns, what are the specific implementation steps?',
+        additionalContext: 'We need to support OAuth2 and have PCI compliance requirements',
+        filePaths: ['src/auth/oauth.js', 'config/security.json'],
+        detailLevel: 'high'
+      }
+    },
+    {
+      title: 'Deep Dive Follow-up',
+      description: 'Detailed follow-up with fresh task discovery',
+      input: {
+        followUpQuery: 'Can you provide code examples for the database schema changes?',
+        refreshTaskDiscovery: true,
+        detailLevel: 'high',
+        saveToFile: true
+      }
+    },
+    {
+      title: 'Quick Follow-up Clarification',
+      description: 'Quick clarification without re-discovering tasks',
+      input: {
+        followUpQuery: 'What did you mean by "event-driven architecture" in your previous response?',
+        detailLevel: 'low',
+        refreshTaskDiscovery: false
+      }
+    }
+  ],
+
+  // Tool metadata
+  metadata: {
+    category: 'research',
+    tags: ['ai', 'research', 'follow-up', 'conversation', 'context'],
+    version: '1.0.0',
+    author: 'Super Agents Framework',
+    complexity: 'medium',
+    estimatedTime: '20-90 seconds',
+    prerequisites: ['Previous research context', 'AI provider configured'],
+    outputs: ['Follow-up analysis', 'Conversation history', 'Context integration', 'Optional file saves'],
+    relatedTools: ['sa-research', 'sa-research-save', 'sa-research-history']
+  }
+};
+
+export default toolDefinition;

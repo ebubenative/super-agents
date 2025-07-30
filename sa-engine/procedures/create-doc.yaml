@@ -1,0 +1,154 @@
+procedure:
+  id: create-doc
+  name: Create Document from Template
+  version: 2.0
+  description: YAML-driven document creation with mandatory user interaction and elicitation
+  tags: [document, template, interactive, elicitation]
+  
+metadata:
+  author: BMAD Method (Enhanced)
+  created: 2025-07-28
+  framework: super-agents
+  bmadCompatible: true
+  
+config:
+  executionMode: interactive
+  allowShortcuts: false
+  mandatoryElicitation: true
+  violationIndicator: "Creating content for elicit=true sections without user interaction"
+  
+variables:
+  required:
+    - template_name
+  optional:
+    - output_filename
+    - template_path
+  defaults:
+    output_filename: "generated-document.md"
+    
+context:
+  templateEngine: true
+  userInteraction: required
+  progressTracking: true
+  
+steps:
+  - id: setup
+    name: "Setup and Template Discovery"
+    type: preparation
+    description: "Initialize procedure and discover template"
+    instructions: |
+      1. If template not provided, list available templates from sa-engine/templates/
+      2. Ask user to select template or provide custom template path
+      3. Validate template accessibility and format
+    validation:
+      - template_exists: true
+      - template_format: "yaml"
+    outputs:
+      - selected_template
+      - template_metadata
+    
+  - id: preferences
+    name: "Set User Preferences"
+    type: configuration
+    description: "Configure execution preferences and output settings"
+    instructions: |
+      1. Show current mode: Interactive (mandatory)
+      2. Confirm output filename and location
+      3. Display template metadata (sections, variables)
+      4. Ask for any variable overrides
+    prompts:
+      - type: confirm
+        message: "Output file: {{output_filename}} - Is this correct?"
+        variable: output_confirmed
+      - type: input
+        message: "Any variable overrides? (JSON format or skip)"
+        variable: variable_overrides
+        optional: true
+    outputs:
+      - output_settings
+      - user_variables
+      
+  - id: process_sections
+    name: "Process Template Sections"
+    type: iterative
+    description: "Process each template section with mandatory user interaction"
+    instructions: |
+      FOR EACH section in template.sections:
+        1. Check section conditions - skip if unmet
+        2. Check agent permissions - note restrictions
+        3. Draft content using section instruction
+        4. Present content with detailed rationale
+        5. IF elicit: true → MANDATORY 1-9 options format
+        6. Save content if possible
+        7. Continue to next section
+    
+    elicitation:
+      mandatory: true
+      format: numbered_options
+      options:
+        1: "Proceed to next section"
+        2-9: "Select 8 methods from elicitation-methods data"
+      ending: "Select 1-9 or just type your question/feedback:"
+      
+    validation:
+      - no_shortcuts: "Cannot create complete content without user interaction"
+      - wait_for_response: "Must wait for user selection before proceeding"
+      
+    flow_control:
+      type: loop
+      condition: "while sections remaining"
+      break_on: "user_exit or template_complete"
+      
+    outputs:
+      - section_content
+      - user_feedback
+      - elicitation_responses
+      
+  - id: finalize
+    name: "Finalize Document"
+    type: completion
+    description: "Complete document creation and save final output"
+    instructions: |
+      1. Compile all section content
+      2. Apply final formatting
+      3. Save to specified output file
+      4. Generate completion summary
+      5. Provide next steps or recommendations
+    validation:
+      - all_required_sections: completed
+      - user_approval: obtained
+    outputs:
+      - final_document
+      - completion_summary
+      
+error_handling:
+  - condition: template_not_found
+    action: list_available_templates
+    message: "Template not found. Please select from available templates."
+    
+  - condition: user_skips_elicitation
+    action: block_and_warn
+    message: "Elicitation is mandatory. Please select an option 1-9."
+    
+  - condition: efficiency_optimization_detected
+    action: violation_warning
+    message: "WORKFLOW VIOLATION: This requires full user interaction. No shortcuts allowed."
+    
+workflow_rules:
+  - rule: disable_efficiency_optimizations
+    description: "This workflow requires full user interaction"
+    
+  - rule: mandatory_step_by_step
+    description: "Each section must be processed sequentially with user feedback"
+    
+  - rule: elicitation_required
+    description: "When elicit: true, must use 1-9 format and wait for response"
+    
+  - rule: no_shortcuts
+    description: "Complete documents cannot be created without following workflow"
+    
+audit_trail:
+  track_user_interactions: true
+  track_elicitation_responses: true  
+  track_section_processing: true
+  track_template_variables: true

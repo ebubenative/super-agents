@@ -1,0 +1,516 @@
+bundle:
+  id: team-enterprise
+  name: Enterprise Development Team
+  version: 1.0.0
+  description: Complete enterprise-grade development team with advanced workflow orchestration
+  category: team
+  
+metadata:
+  author: Super Agents Framework
+  created: 2025-07-30
+  framework: super-agents-v1
+  target_audience: Large enterprises, complex projects, distributed teams
+  project_types: [enterprise-software, large-scale-systems, multi-team-projects, complex-architectures]
+  
+configuration:
+  installation_type: enterprise
+  mcp_integration: advanced
+  template_integration: comprehensive
+  task_management: hierarchical-advanced
+  workflow_orchestration: full
+  governance: enabled
+  
+agents:
+  # Strategic Leadership
+  - id: bmad-master
+    role: BMAD Master
+    priority: critical
+    required: true
+    tools: [sa-start-workflow, sa-workflow-status, sa-workflow-validation]
+    templates: []
+    focus: Overall project orchestration and strategic guidance
+    authority: project-level
+    
+  - id: bmad-orchestrator
+    role: BMAD Orchestrator
+    priority: critical
+    required: true
+    tools: [sa-track-progress]
+    templates: []
+    focus: Multi-team coordination and workflow management
+    authority: organization-level
+    
+  # Core Business & Strategy
+  - id: analyst
+    role: Business Analyst
+    priority: high
+    required: true
+    tools: [sa-research-market, sa-create-brief, sa-brainstorm-session, sa-competitor-analysis]
+    templates: [market-research-tmpl, project-brief-enhanced, competitor-analysis-tmpl, brainstorming-output-tmpl]
+    focus: Enterprise requirements analysis and market intelligence
+    
+  - id: pm
+    role: Product Manager
+    priority: high
+    required: true
+    tools: [sa-generate-prd, sa-create-epic, sa-prioritize-features, sa-stakeholder-analysis]
+    templates: [prd-tmpl, brownfield-prd-tmpl]
+    focus: Product strategy and stakeholder management
+    
+  # Technical Leadership
+  - id: architect
+    role: Enterprise Architect
+    priority: high
+    required: true
+    tools: [sa-design-system, sa-analyze-brownfield, sa-tech-recommendations, sa-create-architecture]
+    templates: [architecture-tmpl, fullstack-architecture-tmpl, brownfield-architecture-tmpl, simple-architecture]
+    focus: Enterprise architecture and system integration
+    
+  # Development Teams
+  - id: developer
+    role: Senior Developer
+    priority: high
+    required: true
+    tools: [sa-implement-story, sa-run-tests, sa-debug-issue, sa-validate-implementation]
+    templates: [react-component-tmpl, react-typescript-component-tmpl, express-api-service-tmpl, jest-unit-test-tmpl]
+    focus: Complex enterprise application development
+    
+  - id: ux-expert
+    role: UX/UI Expert
+    priority: high
+    required: true
+    tools: [sa-create-frontend-spec, sa-generate-ui-prompt, sa-design-wireframes, sa-accessibility-audit]
+    templates: [front-end-spec-tmpl, front-end-architecture-tmpl]
+    focus: Enterprise user experience and accessibility compliance
+    
+  # Quality & Governance
+  - id: qa
+    role: Quality Assurance Lead
+    priority: high
+    required: true
+    tools: [sa-review-code, sa-refactor-code, sa-validate-quality, sa-review-story]
+    templates: [jest-unit-test-tmpl]
+    focus: Enterprise-grade quality assurance and compliance
+    
+  - id: product-owner
+    role: Product Owner
+    priority: high
+    required: true
+    tools: [sa-execute-checklist, sa-shard-document, sa-validate-story-draft, sa-correct-course]
+    templates: [story-tmpl]
+    focus: Business value delivery and acceptance criteria
+    
+  - id: scrum-master
+    role: Scrum Master
+    priority: medium
+    required: true
+    tools: [sa-create-story, sa-create-next-story, sa-update-workflow, sa-track-progress]
+    templates: [story-tmpl]
+    focus: Agile process facilitation and team coordination
+
+governance:
+  compliance:
+    - GDPR compliance tracking
+    - SOX compliance validation
+    - HIPAA requirements (if applicable)
+    - Industry-specific regulations
+    
+  security:
+    - Security review checkpoints
+    - Vulnerability assessment integration
+    - Access control validation
+    - Data privacy compliance
+    
+  quality_gates:
+    - Code review requirements
+    - Automated testing thresholds
+    - Performance benchmarks
+    - Documentation standards
+    
+  audit_trail:
+    - Decision tracking
+    - Change management
+    - Approval workflows
+    - Compliance reporting
+
+workflows:
+  # Enterprise Project Initiation
+  enterprise_project_initiation:
+    name: Enterprise Project Initiation
+    description: Comprehensive enterprise project setup and governance
+    phases:
+      - name: strategic_analysis
+        agents: [bmad-master, analyst, pm]
+        tools: [sa-research-market, sa-brainstorm-session, sa-stakeholder-analysis]
+        templates: [market-research-tmpl, project-brief-enhanced]
+        governance: [compliance-review, stakeholder-approval]
+        
+      - name: requirements_gathering
+        agents: [analyst, pm, product-owner]
+        tools: [sa-generate-prd, sa-shard-document]
+        templates: [prd-tmpl, brownfield-prd-tmpl]
+        governance: [requirements-review, business-approval]
+        
+      - name: architecture_design
+        agents: [architect, bmad-master]
+        tools: [sa-design-system, sa-analyze-brownfield, sa-create-architecture]
+        templates: [architecture-tmpl, fullstack-architecture-tmpl]
+        governance: [architecture-review, security-review]
+        
+      - name: team_formation
+        agents: [bmad-orchestrator, scrum-master]
+        tools: [sa-start-workflow, sa-track-progress]
+        templates: []
+        governance: [resource-allocation, team-approval]
+  
+  # Enterprise Development Lifecycle
+  enterprise_development:
+    name: Enterprise Development Lifecycle
+    description: Full enterprise development cycle with governance
+    phases:
+      - name: epic_planning
+        agents: [pm, product-owner, scrum-master]
+        tools: [sa-create-epic, sa-prioritize-features, sa-create-story]
+        templates: [story-tmpl]
+        governance: [epic-review, priority-approval]
+        
+      - name: design_phase
+        agents: [ux-expert, architect]
+        tools: [sa-create-frontend-spec, sa-design-wireframes, sa-tech-recommendations]
+        templates: [front-end-spec-tmpl, front-end-architecture-tmpl]
+        governance: [design-review, accessibility-check]
+        
+      - name: development_phase
+        agents: [developer, architect]
+        tools: [sa-implement-story, sa-run-tests, sa-debug-issue]
+        templates: [react-component-tmpl, express-api-service-tmpl]
+        governance: [code-review, security-scan]
+        
+      - name: quality_assurance
+        agents: [qa, ux-expert]
+        tools: [sa-review-code, sa-validate-quality, sa-accessibility-audit]
+        templates: [jest-unit-test-tmpl]
+        governance: [quality-gate, compliance-check]
+        
+      - name: deployment_readiness
+        agents: [architect, qa, product-owner]
+        tools: [sa-validate-implementation, sa-correct-course]
+        templates: []
+        governance: [deployment-approval, risk-assessment]
+  
+  # Multi-Team Coordination
+  multi_team_coordination:
+    name: Multi-Team Coordination
+    description: Coordination across multiple development teams
+    phases:
+      - name: inter_team_planning
+        agents: [bmad-orchestrator, bmad-master]
+        tools: [sa-workflow-status, sa-track-progress]
+        templates: []
+        
+      - name: dependency_management
+        agents: [architect, pm]
+        tools: [sa-validate-dependencies, sa-dependency-graph]
+        templates: []
+        
+      - name: integration_coordination
+        agents: [architect, developer]
+        tools: [sa-validate-implementation]
+        templates: []
+        
+      - name: release_coordination
+        agents: [bmad-orchestrator, product-owner]
+        tools: [sa-workflow-validation]
+        templates: []
+
+tools:
+  # Core Enterprise Tools
+  core:
+    - sa-initialize-project
+    - sa-list-tasks
+    - sa-get-task
+    - sa-update-task-status
+    
+  # Orchestration Tools
+  orchestration:
+    - sa-start-workflow
+    - sa-workflow-status
+    - sa-track-progress
+    - sa-workflow-validation
+    
+  # Business Intelligence
+  analyst:
+    - sa-research-market
+    - sa-create-brief
+    - sa-brainstorm-session
+    - sa-competitor-analysis
+    
+  # Product Management
+  pm:
+    - sa-generate-prd
+    - sa-create-epic
+    - sa-prioritize-features
+    - sa-stakeholder-analysis
+    
+  # Enterprise Architecture
+  architect:
+    - sa-design-system
+    - sa-analyze-brownfield
+    - sa-tech-recommendations
+    - sa-create-architecture
+    
+  # Development
+  developer:
+    - sa-implement-story
+    - sa-run-tests
+    - sa-debug-issue
+    - sa-validate-implementation
+    
+  # User Experience
+  ux_expert:
+    - sa-create-frontend-spec
+    - sa-generate-ui-prompt
+    - sa-design-wireframes
+    - sa-accessibility-audit
+    
+  # Quality Assurance
+  qa:
+    - sa-review-code
+    - sa-refactor-code
+    - sa-validate-quality
+    - sa-review-story
+    
+  # Product Ownership
+  product_owner:
+    - sa-execute-checklist
+    - sa-shard-document
+    - sa-validate-story-draft
+    - sa-correct-course
+    
+  # Process Management
+  scrum_master:
+    - sa-create-story
+    - sa-create-next-story
+    - sa-update-workflow
+    - sa-track-progress
+    
+  # Advanced Task Management
+  task_master:
+    - sa-parse-prd
+    - sa-expand-task
+    - sa-analyze-complexity
+    - sa-generate-tasks
+    
+  # Dependency Management
+  dependencies:
+    - sa-add-dependency
+    - sa-remove-dependency
+    - sa-validate-dependencies
+    - sa-dependency-graph
+
+templates:
+  # Comprehensive Template Library
+  business:
+    - market-research-tmpl
+    - project-brief-enhanced
+    - competitor-analysis-tmpl
+    - brainstorming-output-tmpl
+    - prd-tmpl
+    - brownfield-prd-tmpl
+    
+  architecture:
+    - architecture-tmpl
+    - fullstack-architecture-tmpl
+    - brownfield-architecture-tmpl
+    - simple-architecture
+    
+  frontend:
+    - front-end-spec-tmpl
+    - front-end-architecture-tmpl
+    - react-component-tmpl
+    - react-typescript-component-tmpl
+    
+  backend:
+    - express-api-service-tmpl
+    
+  testing:
+    - jest-unit-test-tmpl
+    
+  process:
+    - story-tmpl
+
+enterprise_features:
+  scalability:
+    - Multi-team coordination
+    - Distributed development support
+    - Large codebase management
+    - Microservices architecture support
+    
+  security:
+    - Enterprise security protocols
+    - Access control integration
+    - Audit trail maintenance
+    - Compliance monitoring
+    
+  governance:
+    - Approval workflows
+    - Quality gates
+    - Compliance checkpoints
+    - Risk management
+    
+  integration:
+    - Enterprise system integration
+    - Legacy system compatibility
+    - Third-party service integration
+    - API management
+    
+  monitoring:
+    - Performance monitoring
+    - Quality metrics
+    - Team productivity analytics
+    - Compliance reporting
+
+technology_stack:
+  enterprise_frontend:
+    - React/Angular/Vue (enterprise versions)
+    - TypeScript
+    - Enterprise UI libraries
+    - Micro-frontend architecture
+    
+  enterprise_backend:
+    - Node.js/Java/.NET
+    - Microservices architecture
+    - API gateways
+    - Enterprise databases
+    
+  devops:
+    - Container orchestration (Kubernetes)
+    - CI/CD pipelines
+    - Infrastructure as Code
+    - Monitoring and logging
+    
+  security:
+    - Identity and Access Management
+    - Security scanning tools
+    - Vulnerability management
+    - Compliance monitoring
+
+ide_integrations:
+  claude_code:
+    mcp_server: enterprise
+    memory_file: comprehensive
+    custom_commands: advanced
+    agents: all
+    governance: integrated
+    
+  cursor:
+    rules_files: enterprise
+    workspace_sync: multi-team
+    agents: all
+    compliance: integrated
+    
+  vscode:
+    workspace_settings: enterprise
+    extensions: custom-enterprise
+    code_snippets: comprehensive
+    agents: all
+
+installation:
+  prerequisites:
+    - node_js: ">=18.0.0"
+    - npm: ">=8.0.0"
+    - git: ">=2.0.0"
+    - docker: ">=20.0.0"
+    - kubernetes: optional
+    
+  enterprise_requirements:
+    - Active Directory integration
+    - SSO configuration
+    - Network security compliance
+    - Audit logging setup
+    
+  setup_complexity: enterprise-grade
+  estimated_setup_time: "2-4 hours"
+  
+  deployment_options:
+    - On-premises installation
+    - Private cloud deployment
+    - Hybrid cloud setup
+    - Multi-region deployment
+
+usage_examples:
+  large_scale_project:
+    description: Enterprise-scale project initialization
+    commands:
+      - sa_start_workflow
+      - sa_research_market
+      - sa_generate_prd
+      - sa_design_system
+      - sa_workflow_validation
+      
+  multi_team_coordination:
+    description: Coordinate multiple development teams
+    commands:
+      - sa_track_progress
+      - sa_workflow_status
+      - sa_validate_dependencies
+      - sa_dependency_graph
+      
+  compliance_workflow:
+    description: Ensure compliance throughout development
+    commands:
+      - sa_execute_checklist
+      - sa_validate_quality
+      - sa_accessibility_audit
+      - sa_review_code
+
+best_practices:
+  enterprise_governance:
+    - Implement clear approval workflows
+    - Maintain comprehensive audit trails
+    - Ensure compliance at every stage
+    - Regular governance reviews
+    - Risk assessment and mitigation
+    
+  multi_team_coordination:
+    - Clear communication protocols
+    - Standardized processes across teams
+    - Regular cross-team synchronization
+    - Shared knowledge management
+    - Consistent tooling and practices
+    
+  quality_at_scale:
+    - Automated quality gates
+    - Comprehensive testing strategies
+    - Code review standards
+    - Performance monitoring
+    - Security scanning integration
+    
+  change_management:
+    - Structured change processes
+    - Impact assessment procedures
+    - Rollback strategies
+    - Communication plans
+    - Training and adoption support
+
+support:
+  enterprise_support:
+    - Dedicated support channels
+    - SLA agreements
+    - Priority issue resolution
+    - Custom training programs
+    - Architecture consultation
+    
+  documentation:
+    - Enterprise deployment guides
+    - Governance framework documentation
+    - Multi-team coordination guides
+    - Compliance checklists
+    - Troubleshooting runbooks
+    
+  professional_services:
+    - Implementation consulting
+    - Custom workflow design
+    - Integration services
+    - Training and adoption
+    - Ongoing optimization

@@ -1,0 +1,82 @@
+template:
+  id: simple-architecture
+  name: Simple Architecture Document
+  version: 1.0
+  description: Streamlined architecture template for small to medium projects
+  tags: [architecture, technical, design]
+  output:
+    format: markdown
+    filename: "docs/{{project_slug}}-architecture.md"
+    title: "{{project_name}} Architecture"
+
+metadata:
+  author: Super Agents Framework
+  created: 2025-07-28
+  framework: super-agents
+  bmadCompatible: true
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+variables:
+  required:
+    - project_name
+    - project_slug
+  optional:
+    - tech_stack
+    - deployment_environment
+    - database_type
+    - api_type
+  defaults:
+    tech_stack: "Modern web stack"
+    deployment_environment: "Cloud (AWS/Azure/GCP)"
+    database_type: "PostgreSQL"
+    api_type: "REST API"
+
+sections:
+  - id: overview
+    title: "Architecture Overview"
+    template: |
+      This document outlines the technical architecture for **{{project_name}}**.
+      
+      **Technology Stack:** {{tech_stack}}
+      **Deployment:** {{deployment_environment}}
+      **Database:** {{database_type}}
+      **API Type:** {{api_type}}
+
+  - id: system-components
+    title: "System Components"
+    template: |
+      {{#if components}}
+      {{#each components}}
+      ### {{this.name}}
+      **Purpose:** {{this.purpose}}
+      **Technology:** {{this.technology}}
+      {{#if this.dependencies}}
+      **Dependencies:** {{#bullet this.dependencies}}{{/bullet}}
+      {{/if}}
+      {{/each}}
+      {{else}}
+      [System components to be defined]
+      {{/if}}
+
+  - id: data-flow
+    title: "Data Flow"
+    template: |
+      {{#if data_flow}}
+      {{data_flow}}
+      {{else}}
+      [Data flow diagram and description to be added]
+      {{/if}}
+
+  - id: deployment
+    title: "Deployment Architecture"
+    template: |
+      **Environment:** {{deployment_environment}}
+      
+      {{#if deployment_details}}
+      {{deployment_details}}
+      {{else}}
+      [Deployment details to be specified]
+      {{/if}}

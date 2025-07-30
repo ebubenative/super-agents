@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(npm install:*)",
+      "Bash(chmod:*)",
+      "Bash(node super-agents-cli/index.js --version)",
+      "Bash(rm:*)",
+      "Bash(find:*)",
+      "Bash(node super-agents-cli/index.js --help)",
+      "Bash(node:*)",
+      "Bash(ls:*)",
+      "Bash(cp:*)",
+      "Bash(npm test:*)",
+      "Bash(npx jest:*)",
+      "Bash(npm run test:*)",
+      "Bash(mv:*)",
+      "Bash(true)",
+      "Bash(git restore:*)"
+    ],
+    "deny": []
+  }
+}
