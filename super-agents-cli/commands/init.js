@@ -3,7 +3,7 @@ import ora from 'ora';
 import inquirer from 'inquirer';
 import { existsSync, mkdirSync } from 'fs';
 import { resolve, join, basename } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -85,9 +85,9 @@ export async function initCommand(options) {
 
     spinner = ora('Checking existing installation').start();
 
-    // Dynamic imports with absolute paths
-    const { ConfigManager } = await import(join(enginePath, 'config/ConfigManager.js'));
-    const { StateManager } = await import(join(enginePath, 'state-manager/StateManager.js'));
+    // Dynamic imports with absolute paths (convert to file:// URLs for Windows compatibility)
+    const { ConfigManager } = await import(pathToFileURL(join(enginePath, 'config/ConfigManager.js')).href);
+    const { StateManager } = await import(pathToFileURL(join(enginePath, 'state-manager/StateManager.js')).href);
 
     const configManager = new ConfigManager();
     const stateManager = new StateManager();
