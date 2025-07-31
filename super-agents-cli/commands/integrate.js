@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { existsSync } from 'fs';
-import { readFile, writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 import { join, resolve, dirname } from 'path';
 import ora from 'ora';
 import boxen from 'boxen';
@@ -220,39 +220,30 @@ async function setupClaudeCode(config, method, projectDirectory) {
 
 async function setupCursor(config, method, projectDirectory) {
   if (method === 'mcp') {
-    // Create Cursor MCP configuration  
+    // Use dedicated MCP config file instead of modifying Cursor's settings.json
     const cursorConfigDir = join(projectDirectory, '.cursor');
-    const cursorConfigPath = join(cursorConfigDir, 'settings.json');
+    const mcpConfigPath = join(cursorConfigDir, 'mcp-config.json');
     
     if (!existsSync(cursorConfigDir)) {
       await mkdir(cursorConfigDir, { recursive: true });
     }
     
     const mcpConfig = {
-      "mcp.servers": {
+      mcpServers: {
         [config.serverConfig.name]: {
-          "command": config.serverConfig.command,
-          "args": config.serverConfig.args,
-          "env": config.serverConfig.env
+          command: config.serverConfig.command,
+          args: config.serverConfig.args,
+          env: config.serverConfig.env
         }
       }
     };
     
-    // Merge with existing config
-    if (existsSync(cursorConfigPath)) {
-      try {
-        const existingConfig = JSON.parse(await readFile(cursorConfigPath, 'utf8'));
-        existingConfig["mcp.servers"] = existingConfig["mcp.servers"] || {};
-        existingConfig["mcp.servers"][config.serverConfig.name] = mcpConfig["mcp.servers"][config.serverConfig.name];
-        await writeFile(cursorConfigPath, JSON.stringify(existingConfig, null, 2));
-      } catch (error) {
-        await writeFile(cursorConfigPath, JSON.stringify(mcpConfig, null, 2));
-      }
-    } else {
-      await writeFile(cursorConfigPath, JSON.stringify(mcpConfig, null, 2));
-    }
+    await writeFile(mcpConfigPath, JSON.stringify(mcpConfig, null, 2));
     
-    console.log(chalk.green(`✓ Cursor MCP configuration saved to ${cursorConfigPath}`));
+    console.log(chalk.green(`✓ Cursor MCP configuration saved to ${mcpConfigPath}`));
+    console.log(chalk.cyan('ℹ️  To complete setup, manually configure Cursor to use this MCP server:'));
+    console.log(chalk.gray(`   - Import configuration from: ${mcpConfigPath}`));
+    console.log(chalk.gray('   - Or manually add the MCP server in Cursor settings'));
   } else {
     await generateStandaloneInstructions('cursor', config, projectDirectory);
   }
@@ -260,38 +251,32 @@ async function setupCursor(config, method, projectDirectory) {
 
 async function setupVSCode(config, method, projectDirectory) {
   if (method === 'mcp') {
-    // VS Code MCP setup (would require extension)
-    console.log(chalk.yellow('⚠️  VS Code MCP integration requires the Super Agents extension'));
-    console.log(chalk.cyan('Installing extension automatically...'));
-    
-    // Generate workspace settings
+    // Create dedicated MCP config file instead of modifying workspace settings
     const vscodeDir = join(projectDirectory, '.vscode');
-    const settingsPath = join(vscodeDir, 'settings.json');
+    const mcpConfigPath = join(vscodeDir, 'super-agents-mcp.json');
     
     if (!existsSync(vscodeDir)) {
       await mkdir(vscodeDir, { recursive: true });
     }
     
-    const vscodeSettings = {
-      "super-agents.mcp.enabled": true,
-      "super-agents.mcp.server": config.serverConfig,
-      "super-agents.tools.enabled": config.tools
+    const mcpConfig = {
+      "super-agents": {
+        "mcp": {
+          "enabled": true,
+          "server": config.serverConfig,
+          "tools": config.tools
+        }
+      }
     };
     
-    // Merge with existing settings
-    if (existsSync(settingsPath)) {
-      try {
-        const existingSettings = JSON.parse(await readFile(settingsPath, 'utf8'));
-        Object.assign(existingSettings, vscodeSettings);
-        await writeFile(settingsPath, JSON.stringify(existingSettings, null, 2));
-      } catch (error) {
-        await writeFile(settingsPath, JSON.stringify(vscodeSettings, null, 2));
-      }
-    } else {
-      await writeFile(settingsPath, JSON.stringify(vscodeSettings, null, 2));
-    }
+    await writeFile(mcpConfigPath, JSON.stringify(mcpConfig, null, 2));
     
-    console.log(chalk.green(`✓ VS Code workspace settings saved to ${settingsPath}`));
+    console.log(chalk.green(`✓ VS Code MCP configuration saved to ${mcpConfigPath}`));
+    console.log(chalk.yellow('⚠️  VS Code MCP integration requires manual setup:'));
+    console.log(chalk.cyan('   1. Install the Super Agents VS Code extension'));
+    console.log(chalk.cyan('   2. Extension will automatically detect the MCP config'));
+    console.log(chalk.cyan('   3. Restart VS Code to load the configuration'));
+    console.log(chalk.gray(`   Config file: ${mcpConfigPath}`));
   } else {
     await generateStandaloneInstructions('vscode', config, projectDirectory);
   }
@@ -299,8 +284,13 @@ async function setupVSCode(config, method, projectDirectory) {
 
 async function setupWindsurf(config, method, projectDirectory) {
   if (method === 'mcp') {
-    // Create Windsurf MCP configuration
-    const windsurfConfigPath = join(projectDirectory, 'windsurf-mcp.json');
+    // Create Windsurf MCP configuration in proper directory
+    const windsurfConfigDir = join(projectDirectory, '.windsurf');
+    const mcpConfigPath = join(windsurfConfigDir, 'mcp-config.json');
+    
+    if (!existsSync(windsurfConfigDir)) {
+      await mkdir(windsurfConfigDir, { recursive: true });
+    }
     
     const mcpConfig = {
       "mcp_servers": {
@@ -313,8 +303,13 @@ async function setupWindsurf(config, method, projectDirectory) {
       }
     };
     
-    await writeFile(windsurfConfigPath, JSON.stringify(mcpConfig, null, 2));
-    console.log(chalk.green(`✓ Windsurf MCP configuration saved to ${windsurfConfigPath}`));
+    await writeFile(mcpConfigPath, JSON.stringify(mcpConfig, null, 2));
+    
+    console.log(chalk.green(`✓ Windsurf MCP configuration saved to ${mcpConfigPath}`));
+    console.log(chalk.cyan('ℹ️  To complete setup:'));
+    console.log(chalk.gray('   - Configure Windsurf to use the MCP server'));
+    console.log(chalk.gray(`   - Import configuration from: ${mcpConfigPath}`));
+    console.log(chalk.gray('   - Restart Windsurf to load the configuration'));
   } else {
     await generateStandaloneInstructions('windsurf', config, projectDirectory);
   }
@@ -395,7 +390,7 @@ function getIdeSpecificInstructions(ide) {
 
     'windsurf': `
 **Windsurf Configuration:**
-- Import the generated windsurf-mcp.json configuration
+- Import the generated .windsurf/mcp-config.json configuration
 - Enable MCP servers in Windsurf settings
 - Restart Windsurf to load the Super Agents tools`,
 
