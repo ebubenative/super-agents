@@ -9,9 +9,9 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Use absolute paths for imports
-import { ConfigManager } from '../../sa-engine/config/ConfigManager.js';
-import { StateManager } from '../../sa-engine/state-manager/StateManager.js';
+// Calculate the project root directory
+const projectRoot = resolve(__dirname, '../../');
+const enginePath = join(projectRoot, 'sa-engine');
 
 export async function initCommand(options) {
   console.log(chalk.blue('🚀 Super Agents Project Initialization\n'));
@@ -84,6 +84,10 @@ export async function initCommand(options) {
     console.log(chalk.cyan(`\nInitializing Super Agents in: ${chalk.white(targetDirectory)}\n`));
 
     spinner = ora('Checking existing installation').start();
+
+    // Dynamic imports with absolute paths
+    const { ConfigManager } = await import(join(enginePath, 'config/ConfigManager.js'));
+    const { StateManager } = await import(join(enginePath, 'state-manager/StateManager.js'));
 
     const configManager = new ConfigManager();
     const stateManager = new StateManager();
