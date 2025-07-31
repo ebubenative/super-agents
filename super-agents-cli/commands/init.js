@@ -3,11 +3,21 @@ import ora from 'ora';
 import inquirer from 'inquirer';
 import { existsSync, mkdirSync } from 'fs';
 import { resolve, join, basename } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Use absolute paths for imports
 import { ConfigManager } from '../../sa-engine/config/ConfigManager.js';
 import { StateManager } from '../../sa-engine/state-manager/StateManager.js';
 
 export async function initCommand(options) {
   console.log(chalk.blue('🚀 Super Agents Project Initialization\n'));
+
+  let spinner;
+  const originalCwd = process.cwd();
 
   try {
     // Step 1: Determine target directory
@@ -69,12 +79,11 @@ export async function initCommand(options) {
     }
 
     // Change working directory for this operation
-    const originalCwd = process.cwd();
     process.chdir(targetDirectory);
 
     console.log(chalk.cyan(`\nInitializing Super Agents in: ${chalk.white(targetDirectory)}\n`));
 
-    const spinner = ora('Checking existing installation').start();
+    spinner = ora('Checking existing installation').start();
 
     const configManager = new ConfigManager();
     const stateManager = new StateManager();
@@ -209,10 +218,13 @@ export async function initCommand(options) {
 // Helper function to create Super Agents structure in target directory
 async function createSuperAgentsStructure(targetPath) {
   const { mkdir, writeFile, copyFile } = await import('fs/promises');
-  const { dirname } = await import('path');
+  const { fileURLToPath } = await import('url');
+  const { dirname: pathDirname } = await import('path');
   
   // Get the Super Agents installation directory (where this CLI is running from)
-  const superAgentsRoot = resolve(dirname(import.meta.url), '../..');
+  const currentFileUrl = import.meta.url;
+  const currentFilePath = fileURLToPath(currentFileUrl);
+  const superAgentsRoot = resolve(pathDirname(currentFilePath), '../..');
   
   // Create .super-agents directory
   const saDir = join(targetPath, '.super-agents');

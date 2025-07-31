@@ -25,8 +25,8 @@ import { workflowCommand } from './commands/workflow.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Read package.json for version
-const packagePath = join(__dirname, 'package.json');
+// Read package.json for version (use main package.json, not CLI sub-package)
+const packagePath = join(__dirname, '..', 'package.json');
 const packageJson = JSON.parse(await readFile(packagePath, 'utf8'));
 
 // Beautiful CLI styling utilities
