@@ -67,4 +67,6 @@ build/
 # Test outputs
 test-results/
 coverage/
-src_codebase/
+src_codebase
+.claude
+.super-agents
