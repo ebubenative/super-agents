@@ -5,6 +5,7 @@ import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join, resolve, dirname } from 'path';
 import ora from 'ora';
 import boxen from 'boxen';
+import ClaudeCodeIntegrator from '../../sa-engine/claude-code/ClaudeCodeIntegrator.js';
 
 export async function integrateCommand(options) {
   console.log(chalk.blue('🔗 IDE Integration\n'));
@@ -191,40 +192,28 @@ async function generateIntegrationConfig(ide, method, projectDirectory) {
 
 async function setupClaudeCode(config, method, projectDirectory) {
   if (method === 'mcp') {
-    // Create Claude Code MCP configuration
-    const claudeConfigDir = join(projectDirectory, '.claude');
-    const claudeConfigPath = join(claudeConfigDir, 'desktop_app_config.json');
+    console.log(chalk.cyan('\nRunning full Claude Code integration...'));
     
-    if (!existsSync(claudeConfigDir)) {
-      await mkdir(claudeConfigDir, { recursive: true });
-    }
+    const integrator = new ClaudeCodeIntegrator({
+      projectRoot: projectDirectory, // Use the detected project directory
+      logLevel: 'info', // Or get from options
+      standaloneMode: false,
+      autoGenerateCommands: true,
+      includeHooks: true
+    });
+
+    await integrator.initialize();
     
-    const mcpConfig = {
-      mcpServers: {
-        [config.serverConfig.name]: {
-          command: config.serverConfig.command,
-          args: config.serverConfig.args,
-          env: config.serverConfig.env
-        }
-      }
-    };
+    const status = integrator.getIntegrationStatus();
     
-    // Check if config already exists and merge
-    if (existsSync(claudeConfigPath)) {
-      try {
-        const existingConfig = JSON.parse(await readFile(claudeConfigPath, 'utf8'));
-        existingConfig.mcpServers = existingConfig.mcpServers || {};
-        existingConfig.mcpServers[config.serverConfig.name] = mcpConfig.mcpServers[config.serverConfig.name];
-        await writeFile(claudeConfigPath, JSON.stringify(existingConfig, null, 2));
-      } catch (error) {
-        await writeFile(claudeConfigPath, JSON.stringify(mcpConfig, null, 2));
-      }
-    } else {
-      await writeFile(claudeConfigPath, JSON.stringify(mcpConfig, null, 2));
-    }
-    
-    console.log(chalk.green(`✓ Claude Code MCP configuration saved to ${claudeConfigPath}`));
+    console.log(chalk.green(`\n✓ Claude Code integration successful!`));
+    console.log(`  - Tools registered: ${status.toolCount}`);
+    console.log(`  - Files generated: ${status.generatedFiles}`);
+    console.log(`  - See CLAUDE.md for usage instructions.`);
+
   } else {
+    // The standalone logic can be updated to use StandaloneSetup.js later if needed.
+    // For now, keep the existing behavior for standalone.
     await generateStandaloneInstructions('claude-code', config, projectDirectory);
   }
 }
