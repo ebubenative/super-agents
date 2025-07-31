@@ -21,52 +21,96 @@ Super Agents Framework provides comprehensive AI-powered development assistance 
 
 ### Installation
 
+#### Step 1: Install Super Agents CLI
 ```bash
-# Install globally via npm
-npm install -g super-agents-framework
+# Clone the Super Agents framework
+git clone https://github.com/ebubenative/super-agents.git
+cd super-agents
 
-# Or use the CLI installer
-npx super-agents-framework install
+# Install dependencies
+npm install
+
+# Install CLI globally for easy access
+npm link
 ```
 
-### Setup
+#### Step 2: Initialize in Any Project
+```bash
+# Navigate to your project directory
+cd /path/to/your/project
+
+# Initialize Super Agents (interactive)
+sa init --interactive
+
+# Or specify details directly
+sa init --name="My Project" --template=fullstack
+```
+
+### Key Features of Portable Installation
+
+✅ **Install Anywhere**: Initialize Super Agents in any existing project directory  
+✅ **Smart Detection**: Auto-detects project structure and suggests configuration  
+✅ **IDE Integration**: Sets up MCP integration with absolute paths for any location  
+✅ **Project-Specific**: Each project gets its own `.super-agents/` configuration  
+
+### Setup Workflow
 
 ```bash
-# Interactive setup wizard
-sa setup
+# 1. Initialize Super Agents in your project
+sa init --interactive
+# Asks for: directory, project name, template, AI provider
 
-# Initialize a new project
-sa init my-project --template=fullstack
+# 2. Integrate with your IDE
+sa integrate
+# Auto-detects project directory and sets up IDE configuration
 
-# Check system health
-sa doctor
+# 3. Start using Super Agents
+sa agent list       # View available agents
+sa plan             # Start planning session  
+sa workflow start   # Begin development workflow
 ```
 
 ### IDE Integration
 
-#### Claude Code (Recommended)
+Super Agents automatically detects your project location and creates IDE configurations with correct absolute paths.
+
+#### Automatic Integration
 ```bash
-# Automatic integration
-sa integrate --ide=claude-code --auto-configure
+# Run from anywhere - auto-detects your Super Agents project
+sa integrate
+
+# Interactive mode asks for:
+# - Project directory (if not auto-detected)
+# - IDE choice (Claude Code, Cursor, VS Code, Windsurf, Generic)
+# - Integration method (MCP or Standalone)
 ```
 
-#### Manual Integration
-Add to your IDE's MCP configuration:
-```json
-{
-  "mcpServers": {
-    "super-agents": {
-      "command": "node",
-      "args": ["sa-engine/mcp-server/index.js"],
-      "env": {
-        "SA_PROJECT_ROOT": ".",
-        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
-        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
-      }
-    }
-  }
-}
+#### IDE-Specific Setup
+```bash
+# Claude Code (recommended)
+sa integrate --ide=claude-code --mcp
+
+# Cursor
+sa integrate --ide=cursor --mcp
+
+# VS Code  
+sa integrate --ide=vscode --mcp
+
+# Windsurf
+sa integrate --ide=windsurf --mcp
+
+# Generic AI assistant
+sa integrate --ide=generic --standalone
 ```
+
+#### What Gets Created
+- **Claude Code**: `.claude/desktop_app_config.json` in your project
+- **Cursor**: `.cursor/settings.json` with MCP configuration  
+- **VS Code**: `.vscode/settings.json` with Super Agents settings
+- **Windsurf**: `windsurf-mcp.json` configuration file
+- **Generic**: Setup instructions markdown file
+
+All configurations use absolute paths to the Super Agents installation, so they work from any project location.
 
 ## 🏗️ Architecture
 

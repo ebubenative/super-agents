@@ -1,0 +1,604 @@
+workflow:
+  id: enhanced-greenfield-fullstack
+  name: Enhanced Greenfield Full-Stack Application Development
+  description: >-
+    Advanced agent workflow for building full-stack applications from concept to development.
+    Includes validation gates, progress tracking, and enhanced phase management.
+  type: greenfield
+  version: 2.0
+  project_types:
+    - web-app
+    - saas
+    - enterprise-app
+    - prototype
+    - mvp
+  
+  metadata:
+    estimated_duration: "6-8 weeks"
+    complexity: medium
+    team_size: 3-5
+    phases: 8
+    validation_policy: flexible
+    auto_progression: false
+    requires_approval: true
+
+  phases:
+    - id: analysis
+      name: Analysis & Planning
+      description: Requirements gathering and initial planning
+      estimated_duration: "1-2 weeks"
+      validation_gates:
+        - requirements_documented
+        - stakeholder_signoff
+      sequence:
+        - step: market_analysis
+          agent: analyst
+          action: conduct market research
+          creates: market-research.md
+          optional: true
+          tools: [sa_research_market]
+          notes: "Optional but recommended for competitive products"
+          validation_rules:
+            - market_data_comprehensive
+            - competitor_analysis_complete
+
+        - step: brainstorming_session
+          agent: analyst
+          action: facilitate brainstorming
+          creates: brainstorming-output.md
+          optional: true
+          tools: [sa_brainstorm_session]
+          requires: market-research.md
+          condition: complex_requirements
+          notes: "Facilitated ideation session for complex projects"
+          validation_rules:
+            - ideas_documented
+            - stakeholder_participation
+
+        - step: project_brief_creation
+          agent: analyst
+          action: create project brief
+          creates: project-brief.md
+          requires: [market-research.md, brainstorming-output.md]
+          tools: [sa_create_brief]
+          templates: [project-brief-tmpl]
+          notes: "SAVE OUTPUT: Copy final project-brief.md to your project's docs/ folder"
+          validation_rules:
+            - brief_complete
+            - requirements_clear
+            - success_criteria_defined
+          artifacts:
+            - name: project-brief.md
+              type: requirements
+              required: true
+              location: docs/
+
+    - id: product_management
+      name: Product Management
+      description: PRD creation and feature specification
+      estimated_duration: "1 week"
+      validation_gates:
+        - requirements_complete
+      sequence:
+        - step: prd_creation
+          agent: pm
+          action: generate PRD
+          creates: prd.md
+          requires: project-brief.md
+          tools: [sa_generate_prd]
+          templates: [prd-tmpl]
+          notes: "Creates comprehensive PRD from project brief"
+          validation_rules:
+            - prd_structure_valid
+            - user_stories_defined
+            - acceptance_criteria_clear
+          artifacts:
+            - name: prd.md
+              type: product_requirements
+              required: true
+              location: docs/
+
+        - step: feature_prioritization
+          agent: pm
+          action: prioritize features
+          updates: prd.md
+          requires: prd.md
+          tools: [sa_prioritize_features]
+          notes: "Prioritize features based on business value"
+          validation_rules:
+            - priorities_justified
+            - mvp_defined
+
+    - id: ux_design
+      name: UX Design & Specification
+      description: UI/UX specification and design decisions
+      estimated_duration: "1-2 weeks"
+      validation_gates:
+        - design_approved
+      sequence:
+        - step: user_research
+          agent: ux-expert
+          action: conduct user research
+          creates: user-research.md
+          requires: prd.md
+          optional: true
+          notes: "Optional deep dive into user needs"
+          validation_rules:
+            - user_personas_defined
+            - user_journey_mapped
+
+        - step: frontend_spec_creation
+          agent: ux-expert
+          action: create frontend specification
+          creates: front-end-spec.md
+          requires: prd.md
+          tools: [sa_create_frontend_spec]
+          templates: [front-end-spec-tmpl]
+          notes: "Creates comprehensive UI/UX specification"
+          validation_rules:
+            - ui_components_specified
+            - user_flows_defined
+            - accessibility_considered
+          artifacts:
+            - name: front-end-spec.md
+              type: design_specification
+              required: true
+              location: docs/
+
+        - step: wireframe_creation
+          agent: ux-expert
+          action: design wireframes
+          creates: wireframes/
+          requires: front-end-spec.md
+          tools: [sa_design_wireframes]
+          optional: true
+          notes: "Create wireframes for key user flows"
+          validation_rules:
+            - key_screens_wireframed
+            - navigation_flow_clear
+
+        - step: ai_ui_prompt_generation
+          agent: ux-expert
+          action: generate AI UI prompt
+          creates: v0-prompt.md
+          requires: front-end-spec.md
+          tools: [sa_generate_ui_prompt]
+          condition: user_wants_ai_generation
+          optional: true
+          notes: "Generate prompts for v0, Lovable, etc."
+          validation_rules:
+            - prompt_comprehensive
+            - design_system_included
+
+    - id: architecture
+      name: System Architecture
+      description: Technical architecture and system design
+      estimated_duration: "1-2 weeks"
+      validation_gates:
+        - architecture_approved
+        - technology_stack_validated
+      sequence:
+        - step: technology_research
+          agent: architect
+          action: research technology options
+          creates: tech-research.md
+          requires: [prd.md, front-end-spec.md]
+          optional: true
+          tools: [sa_tech_recommendations]
+          notes: "Research and evaluate technology options"
+          validation_rules:
+            - technology_comparison_complete
+            - recommendations_justified
+
+        - step: architecture_design
+          agent: architect
+          action: design system architecture
+          creates: fullstack-architecture.md
+          requires: [prd.md, front-end-spec.md]
+          tools: [sa_design_system, sa_create_architecture]
+          templates: [fullstack-architecture-tmpl]
+          notes: "Comprehensive architecture design"
+          validation_rules:
+            - architecture_comprehensive
+            - scalability_addressed
+            - security_considered
+            - performance_considered
+          artifacts:
+            - name: fullstack-architecture.md
+              type: architecture
+              required: true
+              location: docs/
+
+        - step: prd_review_and_update
+          agent: pm
+          action: review and update PRD
+          updates: prd.md
+          requires: fullstack-architecture.md
+          condition: architecture_suggests_changes
+          tools: [sa_generate_prd]
+          notes: "Update PRD based on architectural insights"
+          validation_rules:
+            - changes_documented
+            - impact_assessed
+
+    - id: validation
+      name: Document Validation
+      description: Comprehensive validation of all planning artifacts
+      estimated_duration: "3-5 days"
+      validation_gates:
+        - all_documents_validated
+      sequence:
+        - step: artifact_validation
+          agent: po
+          action: validate all artifacts
+          validates: [project-brief.md, prd.md, front-end-spec.md, fullstack-architecture.md]
+          tools: [sa_execute_checklist]
+          templates: [po-master-checklist]
+          notes: "Comprehensive validation of all documents"
+          validation_rules:
+            - consistency_validated
+            - completeness_validated
+            - quality_validated
+
+        - step: document_fixes
+          agent: various
+          action: fix flagged issues
+          updates: any_flagged_documents
+          condition: validation_issues_found
+          notes: "Address issues found during validation"
+          validation_rules:
+            - all_issues_addressed
+            - documents_re_validated
+
+    - id: preparation
+      name: Development Preparation
+      description: Prepare for development phase
+      estimated_duration: "2-3 days"
+      validation_gates:
+        - development_ready
+      sequence:
+        - step: project_structure_guidance
+          action: guide project setup
+          condition: ui_generated_externally
+          notes: "Guide setup for externally generated UI projects"
+          validation_rules:
+            - project_structure_defined
+            - setup_instructions_clear
+
+        - step: document_sharding
+          agent: po
+          action: shard documents for development
+          creates: [docs/prd/, docs/architecture/]
+          requires: all_validated_artifacts
+          tools: [sa_shard_document]
+          notes: "Create development-ready document shards"
+          validation_rules:
+            - documents_properly_sharded
+            - cross_references_maintained
+          artifacts:
+            - name: docs/prd/
+              type: sharded_requirements
+              required: true
+            - name: docs/architecture/
+              type: sharded_architecture
+              required: true
+
+    - id: story_creation
+      name: Story Creation & Management
+      description: Create and manage development stories
+      estimated_duration: "Ongoing"
+      validation_gates:
+        - stories_ready_for_development
+      sequence:
+        - step: create_story
+          agent: sm
+          action: create development story
+          creates: story.md
+          requires: sharded_docs
+          tools: [sa_create_story]
+          repeats: for_each_epic
+          notes: "Create individual development stories"
+          validation_rules:
+            - story_well_defined
+            - acceptance_criteria_clear
+            - effort_estimated
+
+        - step: story_review
+          agent: [analyst, pm]
+          action: review draft story
+          updates: story.md
+          requires: story.md
+          optional: true
+          condition: story_review_enabled
+          tools: [sa_review_story]
+          notes: "Optional story review and approval"
+          validation_rules:
+            - story_approved
+            - requirements_aligned
+
+    - id: development
+      name: Development & QA
+      description: Implementation and quality assurance
+      estimated_duration: "4-6 weeks"
+      validation_gates:
+        - code_quality_gate
+        - security_gate
+        - test_completion_gate
+      sequence:
+        - step: implement_story
+          agent: dev
+          action: implement story
+          creates: implementation_files
+          requires: approved_story.md
+          tools: [sa_implement_story, sa_run_tests, sa_debug_issue]
+          notes: "Implement approved story"
+          validation_rules:
+            - implementation_complete
+            - tests_passing
+            - code_quality_acceptable
+
+        - step: qa_review
+          agent: qa
+          action: review implementation
+          updates: implementation_files
+          requires: implementation_files
+          optional: true
+          tools: [sa_review_code, sa_validate_quality]
+          notes: "Quality assurance review"
+          validation_rules:
+            - code_reviewed
+            - quality_standards_met
+            - documentation_updated
+
+        - step: address_feedback
+          agent: dev
+          action: address QA feedback
+          updates: implementation_files
+          condition: qa_feedback_exists
+          tools: [sa_refactor_code, sa_validate_implementation]
+          notes: "Address QA feedback and issues"
+          validation_rules:
+            - feedback_addressed
+            - quality_improved
+
+  validation_gates_config:
+    requirements_documented:
+      description: "All requirements are properly documented"
+      rules:
+        - project_brief_exists
+        - prd_complete
+        - acceptance_criteria_defined
+      blocking: true
+      auto_fix: false
+
+    stakeholder_signoff:
+      description: "Stakeholder approval received"
+      rules:
+        - stakeholder_approval_documented
+        - requirements_approved
+      blocking: true
+      auto_fix: false
+
+    design_approved:
+      description: "Design specification approved"
+      rules:
+        - frontend_spec_complete
+        - ui_flows_defined
+        - accessibility_addressed
+      blocking: true
+      auto_fix: false
+
+    architecture_approved:
+      description: "Architecture design approved"
+      rules:
+        - architecture_document_complete
+        - technology_decisions_justified
+        - scalability_addressed
+        - security_considerations_included
+      blocking: true
+      auto_fix: false
+
+    technology_stack_validated:
+      description: "Technology stack validated"
+      rules:
+        - technology_choices_justified
+        - compatibility_verified
+        - licensing_cleared
+      blocking: false
+      auto_fix: false
+
+    all_documents_validated:
+      description: "All planning documents validated"
+      rules:
+        - document_consistency_verified
+        - completeness_validated
+        - quality_standards_met
+      blocking: true
+      auto_fix: false
+
+    development_ready:
+      description: "Ready for development phase"
+      rules:
+        - all_artifacts_available
+        - project_structure_defined
+        - development_environment_ready
+      blocking: true
+      auto_fix: true
+
+    stories_ready_for_development:
+      description: "Stories ready for implementation"
+      rules:
+        - stories_well_defined
+        - acceptance_criteria_clear
+        - dependencies_identified
+      blocking: true
+      auto_fix: false
+
+    code_quality_gate:
+      description: "Code quality standards met"
+      rules:
+        - code_style_compliant
+        - test_coverage_adequate
+        - no_critical_issues
+        - documentation_complete
+      blocking: true
+      auto_fix: true
+
+    security_gate:
+      description: "Security requirements met"
+      rules:
+        - no_security_vulnerabilities
+        - authentication_implemented
+        - authorization_implemented
+        - data_protection_implemented
+      blocking: true
+      auto_fix: false
+
+    test_completion_gate:
+      description: "Testing requirements met"
+      rules:
+        - unit_tests_passing
+        - integration_tests_passing
+        - e2e_tests_passing
+        - test_coverage_meets_threshold
+      blocking: true
+      auto_fix: false
+
+  flow_diagram: |
+    ```mermaid
+    graph TD
+        A[Start: Greenfield Project] --> B[Analysis Phase]
+        B --> B1[Market Analysis]
+        B1 --> B2[Brainstorming Session]
+        B2 --> B3[Project Brief Creation]
+        B3 --> B4{Requirements Gate}
+        B4 -->|Pass| C[Product Management Phase]
+        B4 -->|Fail| B3
+
+        C --> C1[PRD Creation]
+        C1 --> C2[Feature Prioritization]
+        C2 --> C3{Requirements Complete Gate}
+        C3 -->|Pass| D[UX Design Phase]
+        C3 -->|Fail| C1
+
+        D --> D1[User Research]
+        D1 --> D2[Frontend Spec Creation]
+        D2 --> D3[Wireframe Creation]
+        D3 --> D4[AI UI Prompt Generation]
+        D4 --> D5{Design Approved Gate}
+        D5 -->|Pass| E[Architecture Phase]
+        D5 -->|Fail| D2
+
+        E --> E1[Technology Research]
+        E1 --> E2[Architecture Design]
+        E2 --> E3[PRD Review & Update]
+        E3 --> E4{Architecture Gates}
+        E4 -->|Pass| F[Validation Phase]
+        E4 -->|Fail| E2
+
+        F --> F1[Artifact Validation]
+        F1 --> F2[Document Fixes]
+        F2 --> F3{All Documents Valid}
+        F3 -->|Pass| G[Preparation Phase]
+        F3 -->|Fail| F2
+
+        G --> G1[Project Structure Guidance]
+        G1 --> G2[Document Sharding]
+        G2 --> G3{Development Ready}
+        G3 -->|Pass| H[Story Creation Phase]
+        G3 -->|Fail| G2
+
+        H --> H1[Create Story]
+        H1 --> H2[Story Review]
+        H2 --> H3{Stories Ready}
+        H3 -->|Pass| I[Development Phase]
+        H3 -->|Fail| H1
+
+        I --> I1[Implement Story]
+        I1 --> I2[QA Review]
+        I2 --> I3[Address Feedback]
+        I3 --> I4{Quality Gates}
+        I4 -->|Pass| I5{More Stories?}
+        I4 -->|Fail| I3
+        I5 -->|Yes| H1
+        I5 -->|No| J[Project Complete]
+
+        style J fill:#90EE90
+        style B4 fill:#FFB6C1
+        style C3 fill:#FFB6C1
+        style D5 fill:#FFB6C1
+        style E4 fill:#FFB6C1
+        style F3 fill:#FFB6C1
+        style G3 fill:#FFB6C1
+        style H3 fill:#FFB6C1
+        style I4 fill:#FFB6C1
+    ```
+
+  decision_guidance:
+    when_to_use:
+      - Building production-ready applications
+      - Multiple team members involved
+      - Complex feature requirements
+      - Comprehensive documentation needed
+      - Long-term maintenance expected
+      - Enterprise or customer-facing applications
+      - Quality gates and validation required
+
+    alternatives:
+      - simple_greenfield: For simple prototypes or MVPs
+      - rapid_development: For time-critical projects
+      - legacy_modernization: For existing system enhancements
+
+  handoff_prompts:
+    phase_transition: |
+      Phase {{current_phase}} completed successfully.
+      Validation gates passed: {{passed_gates}}
+      {{if failed_gates}}Warning: Some gates failed: {{failed_gates}}{{/if}}
+      Proceeding to {{next_phase}}.
+
+    gate_failure: |
+      Validation gate failed: {{gate_name}}
+      Issues found: {{issues}}
+      {{if auto_fix_available}}Attempting auto-fix...{{/if}}
+      {{if manual_fix_required}}Manual intervention required.{{/if}}
+
+    phase_complete: |
+      {{phase_name}} phase completed.
+      Artifacts created: {{artifacts}}
+      Next phase: {{next_phase}}
+      Estimated time: {{estimated_duration}}
+
+  quality_metrics:
+    coverage_threshold: 80
+    complexity_threshold: 10
+    security_scan_required: true
+    performance_testing_required: true
+    accessibility_compliance: WCAG_2_1_AA
+
+  automation:
+    auto_progression: false
+    auto_fix_enabled: true
+    continuous_validation: true
+    progress_tracking: true
+    notification_enabled: true
+
+  integration:
+    required_tools:
+      - sa_research_market
+      - sa_create_brief
+      - sa_generate_prd
+      - sa_create_frontend_spec
+      - sa_design_system
+      - sa_create_architecture
+    
+    optional_tools:
+      - sa_brainstorm_session
+      - sa_design_wireframes
+      - sa_generate_ui_prompt
+      - sa_tech_recommendations
+
+    external_integrations:
+      - v0_ai_ui_generator
+      - lovable_ui_generator
+      - figma_design_import
+      - github_project_integration

@@ -1,0 +1,522 @@
+workflow:
+  id: enhanced-greenfield-ui
+  name: Enhanced Greenfield UI/Frontend Development
+  description: >-
+    Advanced agent workflow for building frontend applications from concept to development.
+    Includes accessibility validation, performance optimization, and modern UI/UX practices.
+  type: greenfield
+  version: 2.0
+  project_types:
+    - spa
+    - mobile-app
+    - micro-frontend
+    - static-site
+    - ui-prototype
+    - pwa
+    - component-library
+
+  metadata:
+    estimated_duration: "4-6 weeks"
+    complexity: medium
+    team_size: 2-4
+    phases: 6
+    validation_policy: flexible
+    auto_progression: false
+    requires_approval: true
+
+  phases:
+    - id: discovery
+      name: UI Discovery & Planning
+      description: User research and interface planning
+      estimated_duration: "1 week"
+      validation_gates:
+        - user_research_complete
+        - ui_requirements_defined
+      sequence:
+        - step: market_research
+          agent: analyst
+          action: research UI trends and competitors
+          creates: ui-market-research.md
+          optional: true
+          tools: [sa_research_market, sa_competitor_analysis]
+          notes: "Research current UI trends and competitor interfaces"
+
+        - step: user_research
+          agent: ux-expert
+          action: conduct user research
+          creates: user-research.md
+          requires: ui-market-research.md
+          optional: true
+          notes: "Deep dive into user needs and behavior patterns"
+
+        - step: project_brief
+          agent: analyst
+          action: create UI project brief
+          creates: project-brief.md
+          tools: [sa_create_brief]
+          notes: "Create comprehensive UI project brief"
+          artifacts:
+            - name: project-brief.md
+              type: requirements
+              required: true
+              location: docs/
+
+    - id: requirements
+      name: UI Requirements Definition
+      description: Define comprehensive UI requirements and user stories
+      estimated_duration: "1 week"
+      validation_gates:
+        - ui_requirements_complete
+        - user_stories_defined
+      sequence:
+        - step: prd_creation
+          agent: pm
+          action: create UI-focused PRD
+          creates: prd.md
+          requires: project-brief.md
+          tools: [sa_generate_prd]
+          templates: [prd-tmpl]
+          notes: "Create PRD focused on UI/UX requirements and user journeys"
+          artifacts:
+            - name: prd.md
+              type: product_requirements
+              required: true
+              location: docs/
+
+        - step: accessibility_requirements
+          agent: ux-expert
+          action: define accessibility requirements
+          creates: accessibility-requirements.md
+          requires: prd.md
+          tools: [sa_accessibility_audit]
+          notes: "Define accessibility standards and compliance requirements"
+
+    - id: design
+      name: UI/UX Design & Specification
+      description: Comprehensive UI design and specification
+      estimated_duration: "2 weeks"
+      validation_gates:
+        - design_system_defined
+        - accessibility_validated
+        - responsive_design_verified
+      sequence:
+        - step: design_system_creation
+          agent: ux-expert
+          action: create design system
+          creates: design-system.md
+          requires: prd.md
+          tools: [sa_create_frontend_spec]
+          notes: "Create comprehensive design system with components, colors, typography"
+
+        - step: wireframe_design
+          agent: ux-expert
+          action: create wireframes
+          creates: wireframes/
+          requires: design-system.md
+          tools: [sa_design_wireframes]
+          notes: "Create wireframes for all key user flows and interactions"
+
+        - step: frontend_specification
+          agent: ux-expert
+          action: create detailed frontend spec
+          creates: front-end-spec.md
+          requires: [design-system.md, wireframes/]
+          tools: [sa_create_frontend_spec]
+          templates: [front-end-spec-tmpl]
+          notes: "Detailed frontend specification with component breakdown"
+          artifacts:
+            - name: front-end-spec.md
+              type: design_specification
+              required: true
+              location: docs/
+
+        - step: ai_ui_generation
+          agent: ux-expert
+          action: generate AI UI prompts
+          creates: ai-ui-prompts.md
+          requires: front-end-spec.md
+          tools: [sa_generate_ui_prompt]
+          condition: ai_generation_requested
+          optional: true
+          notes: "Generate prompts for v0, Lovable, or other AI UI tools"
+
+        - step: accessibility_review
+          agent: ux-expert
+          action: review accessibility compliance
+          validates: front-end-spec.md
+          tools: [sa_accessibility_audit]
+          notes: "Ensure accessibility compliance in design specification"
+
+    - id: architecture
+      name: Frontend Architecture
+      description: Technical architecture for frontend application
+      estimated_duration: "1 week"
+      validation_gates:
+        - architecture_approved
+        - performance_strategy_defined
+      sequence:
+        - step: technology_selection
+          agent: architect
+          action: select frontend technologies
+          creates: tech-stack.md
+          requires: front-end-spec.md
+          tools: [sa_tech_recommendations]
+          notes: "Select optimal frontend technology stack"
+
+        - step: architecture_design
+          agent: architect
+          action: design frontend architecture
+          creates: front-end-architecture.md
+          requires: [front-end-spec.md, tech-stack.md]
+          tools: [sa_design_system, sa_create_architecture]
+          templates: [front-end-architecture-tmpl]
+          notes: "Design scalable frontend architecture"
+          artifacts:
+            - name: front-end-architecture.md
+              type: architecture
+              required: true
+              location: docs/
+
+        - step: performance_strategy
+          agent: architect
+          action: define performance optimization strategy
+          creates: performance-strategy.md
+          requires: front-end-architecture.md
+          tools: [sa_design_system]
+          notes: "Define performance optimization and monitoring strategy"
+
+        - step: prd_architecture_alignment
+          agent: pm
+          action: align PRD with architecture
+          updates: prd.md
+          condition: architecture_changes_requirements
+          notes: "Update PRD based on architectural insights"
+
+    - id: validation
+      name: Design & Architecture Validation
+      description: Comprehensive validation of UI plans
+      estimated_duration: "3-5 days"
+      validation_gates:
+        - all_documents_validated
+        - design_consistency_verified
+      sequence:
+        - step: design_validation
+          agent: po
+          action: validate design consistency
+          validates: [prd.md, front-end-spec.md, front-end-architecture.md]
+          tools: [sa_execute_checklist]
+          notes: "Validate design consistency and completeness"
+
+        - step: accessibility_compliance_check
+          agent: qa
+          action: validate accessibility compliance
+          validates: front-end-spec.md
+          tools: [sa_accessibility_audit]
+          notes: "Ensure full accessibility compliance"
+
+        - step: responsive_design_validation
+          agent: ux-expert
+          action: validate responsive design
+          validates: front-end-spec.md
+          notes: "Ensure responsive design coverage for all breakpoints"
+
+    - id: development
+      name: UI Development & Testing
+      description: Implementation with focus on UI quality
+      estimated_duration: "3-4 weeks"
+      validation_gates:
+        - ui_quality_gate
+        - accessibility_tests_passing
+        - performance_benchmarks_met
+        - cross_browser_compatibility_verified
+      sequence:
+        - step: project_setup
+          action: setup frontend project structure
+          creates: project-structure/
+          requires: front-end-architecture.md
+          notes: "Setup frontend project with build tools and development environment"
+
+        - step: document_sharding
+          agent: po
+          action: shard documents for development
+          creates: [docs/prd/, docs/design/, docs/architecture/]
+          requires: all_validated_artifacts
+          tools: [sa_shard_document]
+          notes: "Create development-ready document shards"
+
+        - step: component_story_creation
+          agent: sm
+          action: create component stories
+          creates: component-stories.md
+          requires: sharded_docs
+          tools: [sa_create_story]
+          notes: "Create stories for individual UI components"
+
+        - step: page_story_creation
+          agent: sm
+          action: create page/feature stories
+          creates: feature-stories.md
+          requires: sharded_docs
+          tools: [sa_create_story]
+          notes: "Create stories for complete pages and features"
+
+        - step: component_implementation
+          agent: dev
+          action: implement UI components
+          creates: [component_files, component_tests]
+          requires: component-stories.md
+          tools: [sa_implement_story]
+          repeats: for_each_component
+          notes: "Implement individual UI components with tests"
+
+        - step: accessibility_testing
+          agent: qa
+          action: test accessibility compliance
+          requires: component_files
+          tools: [sa_accessibility_audit]
+          notes: "Automated and manual accessibility testing"
+
+        - step: responsive_testing
+          agent: qa
+          action: test responsive behavior
+          requires: component_files
+          notes: "Test responsive design across all breakpoints"
+
+        - step: cross_browser_testing
+          agent: qa
+          action: test cross-browser compatibility
+          requires: component_files
+          notes: "Test compatibility across supported browsers"
+
+        - step: performance_testing
+          agent: qa
+          action: test UI performance
+          creates: performance-results.md
+          requires: component_files
+          notes: "Test loading times, bundle size, and runtime performance"
+
+        - step: integration_implementation
+          agent: dev
+          action: integrate components into features
+          creates: [feature_files, integration_tests]
+          requires: [component_files, feature-stories.md]
+          tools: [sa_implement_story]
+          notes: "Integrate components into complete features"
+
+        - step: e2e_testing
+          agent: qa
+          action: end-to-end testing
+          requires: feature_files
+          tools: [sa_run_tests]
+          notes: "Complete user journey testing"
+
+  validation_gates_config:
+    user_research_complete:
+      description: "User research completed and documented"
+      rules:
+        - user_personas_defined
+        - user_journeys_mapped
+        - usability_requirements_identified
+      blocking: false
+      auto_fix: false
+
+    ui_requirements_defined:
+      description: "UI requirements clearly defined"
+      rules:
+        - ui_requirements_documented
+        - user_stories_complete
+        - acceptance_criteria_clear
+      blocking: true
+      auto_fix: false
+
+    design_system_defined:
+      description: "Design system comprehensive and consistent"
+      rules:
+        - color_palette_defined
+        - typography_system_complete
+        - component_library_documented
+        - spacing_system_defined
+      blocking: true
+      auto_fix: false
+
+    accessibility_validated:
+      description: "Accessibility requirements validated"
+      rules:
+        - wcag_compliance_verified
+        - screen_reader_support_planned
+        - keyboard_navigation_designed
+        - color_contrast_verified
+      blocking: true
+      auto_fix: false
+
+    responsive_design_verified:
+      description: "Responsive design verified"
+      rules:
+        - breakpoints_defined
+        - mobile_first_approach
+        - tablet_design_specified
+        - desktop_layout_complete
+      blocking: true
+      auto_fix: false
+
+    architecture_approved:
+      description: "Frontend architecture approved"
+      rules:
+        - technology_stack_justified
+        - component_architecture_defined
+        - state_management_planned
+        - build_process_defined
+      blocking: true
+      auto_fix: false
+
+    performance_strategy_defined:
+      description: "Performance optimization strategy defined"
+      rules:
+        - bundle_optimization_planned
+        - lazy_loading_strategy_defined
+        - caching_strategy_planned
+        - performance_budgets_set
+      blocking: false
+      auto_fix: false
+
+    ui_quality_gate:
+      description: "UI quality standards met"
+      rules:
+        - pixel_perfect_implementation
+        - design_system_consistency
+        - component_reusability_achieved
+        - code_style_compliant
+      blocking: true
+      auto_fix: true
+
+    accessibility_tests_passing:
+      description: "Accessibility tests passing"
+      rules:
+        - automated_accessibility_tests_passing
+        - manual_accessibility_review_complete
+        - screen_reader_testing_passed
+        - keyboard_navigation_working
+      blocking: true
+      auto_fix: false
+
+    performance_benchmarks_met:
+      description: "Performance benchmarks met"
+      rules:
+        - first_contentful_paint_under_threshold
+        - largest_contentful_paint_acceptable
+        - cumulative_layout_shift_minimal
+        - bundle_size_within_budget
+      blocking: true
+      auto_fix: false
+
+    cross_browser_compatibility_verified:
+      description: "Cross-browser compatibility verified"
+      rules:
+        - chrome_compatibility_verified
+        - firefox_compatibility_verified
+        - safari_compatibility_verified
+        - edge_compatibility_verified
+      blocking: true
+      auto_fix: false
+
+  flow_diagram: |
+    ```mermaid
+    graph TD
+        A[Start: UI Development] --> B[Discovery Phase]
+        B --> B1[Market Research]
+        B1 --> B2[User Research]
+        B2 --> B3[Project Brief]
+        B3 --> B4{Discovery Gates}
+        B4 -->|Pass| C[Requirements Phase]
+        B4 -->|Fail| B1
+
+        C --> C1[PRD Creation]
+        C1 --> C2[Accessibility Requirements]
+        C2 --> C3{Requirements Gates}
+        C3 -->|Pass| D[Design Phase]
+        C3 -->|Fail| C1
+
+        D --> D1[Design System Creation]
+        D1 --> D2[Wireframe Design]
+        D2 --> D3[Frontend Specification]
+        D3 --> D4[AI UI Generation]
+        D4 --> D5[Accessibility Review]
+        D5 --> D6{Design Gates}
+        D6 -->|Pass| E[Architecture Phase]
+        D6 -->|Fail| D1
+
+        E --> E1[Technology Selection]
+        E1 --> E2[Architecture Design]
+        E2 --> E3[Performance Strategy]
+        E3 --> E4[PRD Alignment]
+        E4 --> E5{Architecture Gates}
+        E5 -->|Pass| F[Validation Phase]
+        E5 -->|Fail| E1
+
+        F --> F1[Design Validation]
+        F1 --> F2[Accessibility Compliance]
+        F2 --> F3[Responsive Design Validation]
+        F3 --> F4{Validation Gates}
+        F4 -->|Pass| G[Development Phase]
+        F4 -->|Fail| F1
+
+        G --> G1[Project Setup]
+        G1 --> G2[Document Sharding]
+        G2 --> G3[Component Stories]
+        G3 --> G4[Page Stories]
+        G4 --> G5[Component Implementation]
+        G5 --> G6[Accessibility Testing]
+        G6 --> G7[Responsive Testing]
+        G7 --> G8[Cross-browser Testing]
+        G8 --> G9[Performance Testing]
+        G9 --> G10[Integration Implementation]
+        G10 --> G11[E2E Testing]
+        G11 --> G12{Quality Gates}
+        G12 -->|Pass| H[UI Complete]
+        G12 -->|Fail| G5
+
+        style H fill:#90EE90
+        style B4 fill:#FFB6C1
+        style C3 fill:#FFB6C1
+        style D6 fill:#FFB6C1
+        style E5 fill:#FFB6C1
+        style F4 fill:#FFB6C1
+        style G12 fill:#FFB6C1
+    ```
+
+  quality_metrics:
+    accessibility_compliance: WCAG_2_1_AA
+    performance_budget:
+      first_contentful_paint: "1.5s"
+      largest_contentful_paint: "2.5s"
+      cumulative_layout_shift: "0.1"
+      bundle_size_limit: "250kb"
+    browser_support:
+      - chrome: "last 2 versions"
+      - firefox: "last 2 versions"
+      - safari: "last 2 versions"
+      - edge: "last 2 versions"
+
+  automation:
+    auto_progression: false
+    auto_fix_enabled: true
+    continuous_validation: true
+    visual_regression_testing: true
+    accessibility_monitoring: true
+
+  integration:
+    design_tools:
+      - figma_integration
+      - sketch_import
+      - adobe_xd_support
+    
+    ai_ui_generators:
+      - v0_integration
+      - lovable_integration
+      - cursor_composer
+
+    testing_tools:
+      - cypress_e2e_testing
+      - jest_unit_testing
+      - axe_accessibility_testing
+      - lighthouse_performance_testing

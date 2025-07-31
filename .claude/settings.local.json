@@ -20,7 +20,10 @@
       "Bash(git restore:*)",
       "Bash(npm run mcp:test:*)",
       "Bash(npm run:*)",
-      "mcp__ide__executeCode"
+      "mcp__ide__executeCode",
+      "Bash(npm link:*)",
+      "Bash(sa:*)",
+      "Bash(timeout 10s node:*)"
     ],
     "deny": []
   }

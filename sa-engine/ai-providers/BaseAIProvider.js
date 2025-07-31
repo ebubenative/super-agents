@@ -1,4 +1,6 @@
 import { EventEmitter } from 'events';
+import RetryManager from './RetryManager.js';
+import CostTracker from './CostTracker.js';
 
 /**
  * BaseAIProvider - Abstract base class for all AI providers in Super Agents
@@ -42,6 +44,24 @@ export default class BaseAIProvider extends EventEmitter {
     this.modelConfigs = new Map();
     this.rateLimits = new Map();
     this.client = null;
+
+    // Initialize retry manager
+    this.retryManager = new RetryManager({
+      maxRetries: this.options.maxRetries,
+      baseDelay: this.options.retryDelay,
+      backoffFactor: 2,
+      circuitBreakerEnabled: options.circuitBreakerEnabled !== false,
+      enableLogging: this.options.enableLogging
+    });
+
+    // Initialize cost tracker (shared instance or provider-specific)
+    this.costTracker = options.costTracker || new CostTracker({
+      persistData: options.persistCostData !== false,
+      enableBudgetAlerts: options.enableBudgetAlerts !== false,
+      dailyBudgetLimit: options.dailyBudgetLimit,
+      monthlyBudgetLimit: options.monthlyBudgetLimit,
+      enableLogging: this.options.enableLogging
+    });
   }
 
   /**
@@ -98,11 +118,31 @@ export default class BaseAIProvider extends EventEmitter {
       // Track metrics
       this.metrics.requestCount++;
       
-      // Perform generation with retry logic
-      const result = await this.withRetry(() => this._generateText(enhancedParams));
+      // Perform generation with intelligent retry logic
+      const result = await this.retryManager.executeWithRetry(
+        () => this._generateText(enhancedParams),
+        {
+          provider: this.name,
+          operation: 'generateText',
+          metadata: { model: enhancedParams.model }
+        }
+      );
       
       // Process and enrich result
       const enrichedResult = this.enrichResult(result, startTime);
+      
+      // Track cost and usage
+      await this.trackUsage({
+        operation: 'generateText',
+        model: enhancedParams.model,
+        promptTokens: result.usage?.promptTokens || 0,
+        completionTokens: result.usage?.completionTokens || 0,
+        totalTokens: result.usage?.totalTokens || 0,
+        cost: this.calculateCost(result.usage, enhancedParams.model),
+        duration: Date.now() - startTime,
+        success: true,
+        metadata: { role: params.role }
+      });
       
       // Update metrics
       this.updateMetrics(startTime, true);
@@ -113,6 +153,16 @@ export default class BaseAIProvider extends EventEmitter {
     } catch (error) {
       this.metrics.errorCount++;
       this.lastError = error;
+      
+      // Track failed usage
+      await this.trackUsage({
+        operation: 'generateText',
+        model: enhancedParams.model,
+        duration: Date.now() - startTime,
+        success: false,
+        metadata: { role: params.role, error: error.message }
+      });
+      
       this.updateMetrics(startTime, false);
       this.emit('textGenerationError', { params, error });
       throw error;
@@ -137,11 +187,31 @@ export default class BaseAIProvider extends EventEmitter {
       // Track metrics
       this.metrics.requestCount++;
       
-      // Perform generation with retry logic
-      const result = await this.withRetry(() => this._generateObject(enhancedParams));
+      // Perform generation with intelligent retry logic
+      const result = await this.retryManager.executeWithRetry(
+        () => this._generateObject(enhancedParams),
+        {
+          provider: this.name,
+          operation: 'generateObject',
+          metadata: { model: enhancedParams.model }
+        }
+      );
       
       // Process and enrich result
       const enrichedResult = this.enrichResult(result, startTime);
+      
+      // Track cost and usage
+      await this.trackUsage({
+        operation: 'generateObject',
+        model: enhancedParams.model,
+        promptTokens: result.usage?.promptTokens || 0,
+        completionTokens: result.usage?.completionTokens || 0,
+        totalTokens: result.usage?.totalTokens || 0,
+        cost: this.calculateCost(result.usage, enhancedParams.model),
+        duration: Date.now() - startTime,
+        success: true,
+        metadata: { role: params.role, schema: params.schema?.title || 'unknown' }
+      });
       
       // Update metrics
       this.updateMetrics(startTime, true);
@@ -152,6 +222,16 @@ export default class BaseAIProvider extends EventEmitter {
     } catch (error) {
       this.metrics.errorCount++;
       this.lastError = error;
+      
+      // Track failed usage
+      await this.trackUsage({
+        operation: 'generateObject',
+        model: enhancedParams.model,
+        duration: Date.now() - startTime,
+        success: false,
+        metadata: { role: params.role, error: error.message }
+      });
+      
       this.updateMetrics(startTime, false);
       this.emit('objectGenerationError', { params, error });
       throw error;
@@ -236,28 +316,73 @@ export default class BaseAIProvider extends EventEmitter {
   }
 
   /**
-   * Execute function with retry logic
+   * Execute function with intelligent retry logic (legacy method)
+   * @deprecated Use retryManager.executeWithRetry() instead
    * @param {Function} fn - Function to execute
    * @returns {Promise<any>} Function result
    */
   async withRetry(fn) {
-    let lastError;
-    
-    for (let attempt = 0; attempt < this.options.maxRetries; attempt++) {
-      try {
-        return await fn();
-      } catch (error) {
-        lastError = error;
-        
-        if (attempt < this.options.maxRetries - 1) {
-          const delay = this.options.retryDelay * Math.pow(2, attempt);
-          await this.sleep(delay);
-          this.emit('retryAttempt', { attempt: attempt + 1, delay, error });
-        }
-      }
+    return await this.retryManager.executeWithRetry(fn, {
+      provider: this.name,
+      operation: 'legacy'
+    });
+  }
+
+  /**
+   * Get retry statistics for this provider
+   * @returns {Object} Retry statistics
+   */
+  getRetryStats() {
+    return this.retryManager.getRetryStats(this.name);
+  }
+
+  /**
+   * Reset circuit breaker for this provider
+   */
+  resetCircuitBreaker() {
+    this.retryManager.resetCircuitBreaker(this.name);
+  }
+
+  /**
+   * Track usage and cost for an operation
+   * @param {Object} usage - Usage information
+   */
+  async trackUsage(usage) {
+    try {
+      await this.costTracker.trackUsage({
+        provider: this.name,
+        ...usage
+      });
+    } catch (error) {
+      this.log('Failed to track usage', { error: error.message }, 'warn');
     }
-    
-    throw lastError;
+  }
+
+  /**
+   * Calculate cost for token usage
+   * @param {Object} usage - Token usage
+   * @param {string} model - Model name
+   * @returns {number} Cost in USD
+   */
+  calculateCost(usage, model) {
+    // Override in subclasses with actual pricing
+    return 0;
+  }
+
+  /**
+   * Get cost tracking statistics
+   * @returns {Object} Cost statistics
+   */
+  getCostStats() {
+    return this.costTracker.getUsageStats({ provider: this.name });
+  }
+
+  /**
+   * Set budget limits for this provider
+   * @param {Object} budgets - Budget configuration
+   */
+  setBudgets(budgets) {
+    this.costTracker.setBudgets(budgets);
   }
 
   /**

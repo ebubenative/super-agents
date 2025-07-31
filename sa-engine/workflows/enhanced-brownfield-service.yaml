@@ -1,0 +1,579 @@
+workflow:
+  id: enhanced-brownfield-service
+  name: Enhanced Brownfield Service/API Enhancement
+  description: >-
+    Advanced agent workflow for enhancing existing backend services and APIs with new features,
+    modernization, or performance improvements. Includes comprehensive analysis, validation gates,
+    and risk management for existing system integration.
+  type: brownfield
+  version: 2.0
+  project_types:
+    - service-modernization
+    - api-enhancement
+    - microservice-extraction
+    - performance-optimization
+    - integration-enhancement
+    - legacy-migration
+
+  metadata:
+    estimated_duration: "4-6 weeks"
+    complexity: high
+    team_size: 2-4
+    phases: 6
+    validation_policy: strict
+    auto_progression: false
+    requires_approval: true
+    risk_level: medium
+
+  phases:
+    - id: system_analysis
+      name: System Analysis & Discovery
+      description: Comprehensive analysis of existing service and system context
+      estimated_duration: "1-2 weeks"
+      validation_gates:
+        - system_analysis_complete
+        - risk_assessment_complete
+      sequence:
+        - step: service_discovery
+          agent: architect
+          action: analyze existing service architecture
+          creates: service-analysis.md
+          tools: [sa_analyze_brownfield]
+          notes: "Comprehensive analysis of existing service architecture and dependencies"
+          validation_rules:
+            - service_boundaries_identified
+            - dependencies_mapped
+            - performance_baseline_established
+          artifacts:
+            - name: service-analysis.md
+              type: system_analysis
+              required: true
+              location: docs/
+
+        - step: codebase_analysis
+          agent: architect
+          action: analyze existing codebase
+          creates: codebase-analysis.md
+          requires: service-analysis.md
+          tools: [sa_analyze_brownfield]
+          notes: "Deep dive into code structure, patterns, and technical debt"
+          validation_rules:
+            - code_patterns_documented
+            - technical_debt_identified
+            - refactoring_opportunities_noted
+
+        - step: integration_mapping
+          agent: architect
+          action: map system integrations
+          creates: integration-map.md
+          requires: [service-analysis.md, codebase-analysis.md]
+          tools: [sa_analyze_brownfield]
+          notes: "Document all integration points and data flows"
+          validation_rules:
+            - integration_points_mapped
+            - data_flows_documented
+            - breaking_change_impact_assessed
+
+        - step: risk_assessment
+          agent: architect
+          action: assess enhancement risks
+          creates: risk-assessment.md
+          requires: [service-analysis.md, integration-map.md]
+          tools: [sa_analyze_brownfield]
+          notes: "Identify and assess risks associated with proposed changes"
+          validation_rules:
+            - risks_identified
+            - impact_analysis_complete
+            - mitigation_strategies_defined
+
+    - id: requirements_planning
+      name: Requirements Planning
+      description: Define enhancement requirements and scope
+      estimated_duration: "1 week"
+      validation_gates:
+        - requirements_complete
+        - backward_compatibility_verified
+      sequence:
+        - step: stakeholder_analysis
+          agent: pm
+          action: analyze stakeholders and impacts
+          creates: stakeholder-analysis.md
+          requires: risk-assessment.md
+          tools: [sa_stakeholder_analysis]
+          notes: "Identify all stakeholders affected by the enhancement"
+          validation_rules:
+            - stakeholders_identified
+            - impact_on_stakeholders_assessed
+            - communication_plan_defined
+
+        - step: prd_creation
+          agent: pm
+          action: create comprehensive PRD
+          creates: prd.md
+          requires: [service-analysis.md, stakeholder-analysis.md]
+          tools: [sa_generate_prd]
+          templates: [brownfield-prd-tmpl]
+          notes: "Create PRD with focus on brownfield considerations"
+          validation_rules:
+            - requirements_comprehensive
+            - backward_compatibility_addressed
+            - migration_strategy_defined
+            - rollback_plan_included
+          artifacts:
+            - name: prd.md
+              type: product_requirements
+              required: true
+              location: docs/
+
+        - step: api_versioning_strategy
+          agent: architect
+          action: define API versioning strategy
+          creates: api-versioning.md
+          requires: prd.md
+          condition: api_changes_required
+          tools: [sa_design_system]
+          notes: "Define strategy for API evolution and versioning"
+          validation_rules:
+            - versioning_strategy_defined
+            - breaking_changes_identified
+            - migration_timeline_established
+
+    - id: architecture_enhancement
+      name: Architecture Enhancement
+      description: Design enhanced architecture while preserving system stability
+      estimated_duration: "1-2 weeks"
+      validation_gates:
+        - architecture_approved
+        - migration_strategy_validated
+      sequence:
+        - step: architecture_design
+          agent: architect
+          action: design enhanced architecture
+          creates: enhanced-architecture.md
+          requires: [prd.md, risk-assessment.md]
+          tools: [sa_design_system, sa_create_architecture]
+          templates: [brownfield-architecture-tmpl]
+          notes: "Design enhanced architecture with migration path"
+          validation_rules:
+            - architecture_evolution_planned
+            - migration_path_defined
+            - rollback_strategy_included
+            - performance_impact_assessed
+          artifacts:
+            - name: enhanced-architecture.md
+              type: architecture
+              required: true
+              location: docs/
+
+        - step: database_migration_plan
+          agent: architect
+          action: plan database changes
+          creates: database-migration.md
+          requires: enhanced-architecture.md
+          condition: database_changes_required
+          tools: [sa_design_system]
+          notes: "Plan database schema changes and migration strategy"
+          validation_rules:
+            - migration_scripts_planned
+            - data_integrity_ensured
+            - downtime_minimized
+
+        - step: deployment_strategy
+          agent: architect
+          action: define deployment strategy
+          creates: deployment-strategy.md
+          requires: enhanced-architecture.md
+          tools: [sa_design_system]
+          notes: "Define safe deployment approach for brownfield enhancement"
+          validation_rules:
+            - deployment_approach_defined
+            - rollback_procedures_documented
+            - monitoring_strategy_included
+
+    - id: validation_and_approval
+      name: Validation & Approval
+      description: Comprehensive validation of enhancement plans
+      estimated_duration: "3-5 days"
+      validation_gates:
+        - all_documents_validated
+        - stakeholder_approval_received
+      sequence:
+        - step: technical_validation
+          agent: po
+          action: validate technical artifacts
+          validates: [prd.md, enhanced-architecture.md, deployment-strategy.md]
+          tools: [sa_execute_checklist, sa_validate_story_draft]
+          templates: [po-master-checklist]
+          notes: "Comprehensive technical validation with brownfield focus"
+          validation_rules:
+            - technical_feasibility_confirmed
+            - risk_mitigation_adequate
+            - documentation_complete
+
+        - step: stakeholder_review
+          agent: pm
+          action: conduct stakeholder review
+          requires: technical_validation_complete
+          tools: [sa_stakeholder_analysis]
+          notes: "Get stakeholder approval for enhancement plan"
+          validation_rules:
+            - stakeholder_approval_documented
+            - concerns_addressed
+            - go_no_go_decision_made
+
+        - step: security_review
+          agent: qa
+          action: conduct security review
+          creates: security-review.md
+          requires: enhanced-architecture.md
+          tools: [sa_validate_quality]
+          notes: "Security assessment of proposed changes"
+          validation_rules:
+            - security_implications_assessed
+            - compliance_requirements_met
+            - security_testing_planned
+
+    - id: preparation
+      name: Development Preparation
+      description: Prepare for safe development and deployment
+      estimated_duration: "2-3 days"
+      validation_gates:
+        - development_environment_ready
+        - monitoring_configured
+      sequence:
+        - step: environment_preparation
+          action: prepare development environment
+          creates: environment-setup.md
+          requires: deployment-strategy.md
+          notes: "Set up development and testing environments"
+          validation_rules:
+            - development_environment_configured
+            - testing_environment_available
+            - production_like_testing_enabled
+
+        - step: monitoring_setup
+          agent: architect
+          action: configure monitoring and alerting
+          creates: monitoring-config.md
+          requires: enhanced-architecture.md
+          tools: [sa_design_system]
+          notes: "Set up monitoring for the enhancement process"
+          validation_rules:
+            - monitoring_configured
+            - alerting_rules_defined
+            - dashboards_prepared
+
+        - step: document_sharding
+          agent: po
+          action: shard documents for development
+          creates: [docs/prd/, docs/architecture/, docs/deployment/]
+          requires: all_validated_artifacts
+          tools: [sa_shard_document]
+          notes: "Create development-ready document shards"
+          validation_rules:
+            - documents_properly_sharded
+            - cross_references_maintained
+            - development_context_preserved
+          artifacts:
+            - name: docs/prd/
+              type: sharded_requirements
+              required: true
+            - name: docs/architecture/
+              type: sharded_architecture
+              required: true
+            - name: docs/deployment/
+              type: deployment_guides
+              required: true
+
+    - id: iterative_development
+      name: Iterative Development & Testing
+      description: Careful implementation with continuous validation
+      estimated_duration: "3-4 weeks"
+      validation_gates:
+        - code_quality_gate
+        - integration_tests_passing
+        - backward_compatibility_verified
+        - performance_regression_tested
+      sequence:
+        - step: create_story
+          agent: sm
+          action: create development story
+          creates: story.md
+          requires: sharded_docs
+          tools: [sa_create_story]
+          repeats: for_each_epic
+          notes: "Create stories with brownfield considerations"
+          validation_rules:
+            - story_includes_testing_strategy
+            - rollback_plan_included
+            - integration_impact_assessed
+
+        - step: implement_with_testing
+          agent: dev
+          action: implement with comprehensive testing
+          creates: [implementation_files, test_files]
+          requires: approved_story.md
+          tools: [sa_implement_story, sa_run_tests, sa_debug_issue]
+          notes: "Implement with emphasis on testing and validation"
+          validation_rules:
+            - implementation_complete
+            - unit_tests_comprehensive
+            - integration_tests_passing
+            - backward_compatibility_maintained
+
+        - step: integration_validation
+          agent: dev
+          action: validate integration points
+          requires: implementation_files
+          tools: [sa_validate_implementation, sa_run_tests]
+          notes: "Validate all integration points and data flows"
+          validation_rules:
+            - integration_points_tested
+            - data_integrity_verified
+            - performance_impact_measured
+
+        - step: qa_review_brownfield
+          agent: qa
+          action: comprehensive QA review
+          updates: implementation_files
+          requires: [implementation_files, integration_validation]
+          tools: [sa_review_code, sa_validate_quality]
+          notes: "QA review with focus on brownfield risks"
+          validation_rules:
+            - code_quality_standards_met
+            - brownfield_risks_mitigated
+            - regression_testing_complete
+            - documentation_updated
+
+        - step: performance_testing
+          agent: qa
+          action: conduct performance testing
+          creates: performance-test-results.md
+          requires: qa_review_complete
+          tools: [sa_validate_quality]
+          notes: "Validate performance impact of changes"
+          validation_rules:
+            - performance_benchmarks_met
+            - no_regression_detected
+            - scalability_validated
+
+  validation_gates_config:
+    system_analysis_complete:
+      description: "Comprehensive system analysis completed"
+      rules:
+        - service_architecture_documented
+        - dependencies_mapped
+        - integration_points_identified
+        - technical_debt_assessed
+      blocking: true
+      auto_fix: false
+
+    risk_assessment_complete:
+      description: "Risk assessment completed and approved"
+      rules:
+        - risks_identified_and_assessed
+        - mitigation_strategies_defined
+        - impact_analysis_complete
+      blocking: true
+      auto_fix: false
+
+    requirements_complete:
+      description: "Enhancement requirements fully defined"
+      rules:
+        - prd_comprehensive
+        - stakeholder_needs_addressed
+        - scope_clearly_defined
+        - success_criteria_established
+      blocking: true
+      auto_fix: false
+
+    backward_compatibility_verified:
+      description: "Backward compatibility strategy verified"
+      rules:
+        - breaking_changes_identified
+        - migration_path_defined
+        - compatibility_matrix_complete
+      blocking: true
+      auto_fix: false
+
+    architecture_approved:
+      description: "Enhanced architecture approved"
+      rules:
+        - architecture_evolution_planned
+        - technical_feasibility_confirmed
+        - performance_impact_acceptable
+        - security_requirements_met
+      blocking: true
+      auto_fix: false
+
+    migration_strategy_validated:
+      description: "Migration strategy validated"
+      rules:
+        - migration_plan_complete
+        - rollback_strategy_defined
+        - testing_strategy_comprehensive
+      blocking: true
+      auto_fix: false
+
+    development_environment_ready:
+      description: "Development environment prepared"
+      rules:
+        - development_environment_configured
+        - testing_environment_available
+        - ci_cd_pipeline_ready
+      blocking: true
+      auto_fix: true
+
+    monitoring_configured:
+      description: "Monitoring and alerting configured"
+      rules:
+        - monitoring_dashboards_ready
+        - alerting_rules_configured
+        - logging_enhanced
+      blocking: false
+      auto_fix: true
+
+    code_quality_gate:
+      description: "Code quality standards met"
+      rules:
+        - code_style_compliant
+        - test_coverage_adequate
+        - no_critical_issues
+        - documentation_complete
+      blocking: true
+      auto_fix: true
+
+    integration_tests_passing:
+      description: "Integration tests passing"
+      rules:
+        - integration_test_suite_passing
+        - api_contract_tests_passing
+        - end_to_end_tests_passing
+      blocking: true
+      auto_fix: false
+
+    performance_regression_tested:
+      description: "Performance regression testing complete"
+      rules:
+        - performance_benchmarks_met
+        - load_testing_passed
+        - memory_usage_acceptable
+        - response_times_within_limits
+      blocking: true
+      auto_fix: false
+
+  flow_diagram: |
+    ```mermaid
+    graph TD
+        A[Start: Service Enhancement] --> B[System Analysis Phase]
+        B --> B1[Service Discovery]
+        B1 --> B2[Codebase Analysis]
+        B2 --> B3[Integration Mapping]
+        B3 --> B4[Risk Assessment]
+        B4 --> B5{Analysis Gates}
+        B5 -->|Pass| C[Requirements Planning]
+        B5 -->|Fail| B1
+
+        C --> C1[Stakeholder Analysis]
+        C1 --> C2[PRD Creation]
+        C2 --> C3[API Versioning Strategy]
+        C3 --> C4{Requirements Gates}
+        C4 -->|Pass| D[Architecture Enhancement]
+        C4 -->|Fail| C1
+
+        D --> D1[Architecture Design]
+        D1 --> D2[Database Migration Plan]
+        D2 --> D3[Deployment Strategy]
+        D3 --> D4{Architecture Gates}
+        D4 -->|Pass| E[Validation & Approval]
+        D4 -->|Fail| D1
+
+        E --> E1[Technical Validation]
+        E1 --> E2[Stakeholder Review]
+        E2 --> E3[Security Review]
+        E3 --> E4{Validation Gates}
+        E4 -->|Pass| F[Preparation Phase]
+        E4 -->|Fail| E1
+
+        F --> F1[Environment Preparation]
+        F1 --> F2[Monitoring Setup]
+        F2 --> F3[Document Sharding]
+        F3 --> F4{Preparation Gates}
+        F4 -->|Pass| G[Development Phase]
+        F4 -->|Fail| F1
+
+        G --> G1[Create Story]
+        G1 --> G2[Implement with Testing]
+        G2 --> G3[Integration Validation]
+        G3 --> G4[QA Review]
+        G4 --> G5[Performance Testing]
+        G5 --> G6{Quality Gates}
+        G6 -->|Pass| G7{More Stories?}
+        G6 -->|Fail| G2
+        G7 -->|Yes| G1
+        G7 -->|No| H[Enhancement Complete]
+
+        style H fill:#90EE90
+        style B5 fill:#FFB6C1
+        style C4 fill:#FFB6C1
+        style D4 fill:#FFB6C1
+        style E4 fill:#FFB6C1
+        style F4 fill:#FFB6C1
+        style G6 fill:#FFB6C1
+    ```
+
+  decision_guidance:
+    when_to_use:
+      - Existing service requires significant enhancements
+      - API versioning or breaking changes needed
+      - Database schema changes required
+      - Performance improvements needed
+      - Multiple integration points affected
+      - Legacy system modernization
+      - Microservice extraction from monolith
+
+    risk_factors:
+      high_risk:
+        - Breaking API changes
+        - Database schema modifications
+        - Critical system components
+        - Multiple dependent services
+      medium_risk:
+        - New feature additions
+        - Performance optimizations
+        - Configuration changes
+      low_risk:
+        - Bug fixes
+        - Documentation updates
+        - Minor enhancements
+
+  automation:
+    auto_progression: false
+    auto_fix_enabled: true
+    continuous_validation: true
+    progress_tracking: true
+    risk_monitoring: true
+    rollback_automation: true
+
+  integration:
+    required_tools:
+      - sa_analyze_brownfield
+      - sa_generate_prd
+      - sa_design_system
+      - sa_create_architecture
+      - sa_implement_story
+      - sa_validate_implementation
+
+    monitoring_integration:
+      - application_performance_monitoring
+      - error_tracking
+      - log_aggregation
+      - metrics_collection
+      - alerting_system
+
+    testing_integration:
+      - unit_testing_framework
+      - integration_testing_suite
+      - performance_testing_tools
+      - security_scanning_tools
+      - api_contract_testing

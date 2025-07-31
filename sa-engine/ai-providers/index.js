@@ -9,9 +9,15 @@ export { default as ProviderManager } from './ProviderManager.js';
 export { default as ProviderRegistry } from './ProviderRegistry.js';
 export { default as RoleBasedRouter } from './RoleBasedRouter.js';
 
+// Phase 16: Enhanced AI Features - New Management Systems
+export { default as RetryManager } from './RetryManager.js';
+export { default as CostTracker } from './CostTracker.js';
+
 // Enhanced Provider Implementations
 export { default as AnthropicProvider } from './AnthropicProvider.js';
 export { default as OpenAIProvider } from './OpenAIProvider.js';
+export { default as GoogleProvider } from './GoogleProvider.js';
+export { default as PerplexityProvider } from './PerplexityProvider.js';
 
 // Legacy Provider Implementations (Vercel AI SDK based)
 export { AnthropicAIProvider } from './anthropic.js';

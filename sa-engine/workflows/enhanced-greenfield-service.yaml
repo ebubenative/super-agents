@@ -1,0 +1,509 @@
+workflow:
+  id: enhanced-greenfield-service
+  name: Enhanced Greenfield Service/API Development
+  description: >-
+    Advanced workflow for building backend services and APIs from scratch with focus on
+    scalability, security, and modern architectural patterns.
+  type: greenfield
+  version: 2.0
+  project_types:
+    - microservice
+    - api-service
+    - backend-service
+    - data-service
+    - integration-service
+    - serverless-service
+
+  metadata:
+    estimated_duration: "4-6 weeks"
+    complexity: medium
+    team_size: 2-4
+    phases: 6
+    validation_policy: flexible
+    auto_progression: false
+    requires_approval: true
+
+  phases:
+    - id: service_planning
+      name: Service Planning & Analysis
+      description: Define service requirements and scope
+      estimated_duration: "1 week"
+      validation_gates:
+        - service_requirements_defined
+        - api_contract_specified
+      sequence:
+        - step: service_brief_creation
+          agent: analyst
+          action: create service project brief
+          creates: service-brief.md
+          tools: [sa_create_brief]
+          notes: "Define service purpose, scope, and business requirements"
+
+        - step: api_requirements
+          agent: pm
+          action: define API requirements
+          creates: api-requirements.md
+          requires: service-brief.md
+          tools: [sa_generate_prd]
+          notes: "Define comprehensive API requirements and specifications"
+
+        - step: service_prd
+          agent: pm
+          action: create service PRD
+          creates: service-prd.md
+          requires: api-requirements.md
+          tools: [sa_generate_prd]
+          templates: [prd-tmpl]
+          notes: "Create comprehensive service PRD"
+          artifacts:
+            - name: service-prd.md
+              type: product_requirements
+              required: true
+              location: docs/
+
+    - id: api_design
+      name: API Design & Specification
+      description: Design API contracts and interfaces
+      estimated_duration: "1 week"
+      validation_gates:
+        - api_design_approved
+        - contract_testing_planned
+      sequence:
+        - step: api_contract_design
+          agent: architect
+          action: design API contracts
+          creates: api-specification.yaml
+          requires: service-prd.md
+          tools: [sa_design_system]
+          notes: "Design comprehensive API specifications using OpenAPI"
+
+        - step: data_model_design
+          agent: architect
+          action: design data models
+          creates: data-models.md
+          requires: api-specification.yaml
+          tools: [sa_design_system]
+          notes: "Design database schemas and data models"
+
+        - step: integration_planning
+          agent: architect
+          action: plan external integrations
+          creates: integration-plan.md
+          requires: service-prd.md
+          tools: [sa_design_system]
+          notes: "Plan integrations with external services and APIs"
+
+    - id: architecture
+      name: Service Architecture Design
+      description: Design scalable service architecture
+      estimated_duration: "1 week"
+      validation_gates:
+        - architecture_approved
+        - scalability_validated
+        - security_validated
+      sequence:
+        - step: technology_selection
+          agent: architect
+          action: select service technology stack
+          creates: tech-stack.md
+          requires: service-prd.md
+          tools: [sa_tech_recommendations]
+          notes: "Select optimal technology stack for service"
+
+        - step: architecture_design
+          agent: architect
+          action: design service architecture
+          creates: service-architecture.md
+          requires: [api-specification.yaml, tech-stack.md]
+          tools: [sa_design_system, sa_create_architecture]
+          notes: "Design comprehensive service architecture"
+          artifacts:
+            - name: service-architecture.md
+              type: architecture
+              required: true
+              location: docs/
+
+        - step: security_design
+          agent: architect
+          action: design security architecture
+          creates: security-architecture.md
+          requires: service-architecture.md
+          tools: [sa_design_system]
+          notes: "Design security measures and authentication/authorization"
+
+        - step: deployment_architecture
+          agent: architect
+          action: design deployment strategy
+          creates: deployment-architecture.md
+          requires: service-architecture.md
+          tools: [sa_design_system]
+          notes: "Design deployment, scaling, and infrastructure strategy"
+
+    - id: validation
+      name: Architecture Validation
+      description: Validate service design and architecture
+      estimated_duration: "3-5 days"
+      validation_gates:
+        - architecture_validated
+        - security_reviewed
+      sequence:
+        - step: architecture_review
+          agent: po
+          action: validate service architecture
+          validates: [service-prd.md, service-architecture.md, security-architecture.md]
+          tools: [sa_execute_checklist]
+          notes: "Comprehensive architecture validation"
+
+        - step: security_review
+          agent: qa
+          action: conduct security review
+          validates: security-architecture.md
+          tools: [sa_validate_quality]
+          notes: "Security architecture review and validation"
+
+        - step: scalability_review
+          agent: architect
+          action: validate scalability design
+          validates: service-architecture.md
+          tools: [sa_design_system]
+          notes: "Validate scalability and performance design"
+
+    - id: preparation
+      name: Development Preparation
+      description: Prepare for service development
+      estimated_duration: "2-3 days"
+      validation_gates:
+        - development_environment_ready
+        - ci_cd_configured
+      sequence:
+        - step: project_scaffolding
+          action: create service project structure
+          creates: service-scaffold/
+          requires: service-architecture.md
+          notes: "Generate service project structure and boilerplate"
+
+        - step: development_environment
+          action: setup development environment
+          creates: dev-environment-config/
+          requires: service-scaffold/
+          notes: "Configure development environment and tools"
+
+        - step: ci_cd_setup
+          action: configure CI/CD pipeline
+          creates: ci-cd-config/
+          requires: deployment-architecture.md
+          notes: "Setup continuous integration and deployment pipeline"
+
+        - step: document_sharding
+          agent: po
+          action: shard service documents
+          creates: [docs/prd/, docs/api/, docs/architecture/]
+          requires: all_validated_artifacts
+          tools: [sa_shard_document]
+          notes: "Create development-ready document shards"
+
+    - id: development
+      name: Service Development & Testing
+      description: Implement service with comprehensive testing
+      estimated_duration: "3-4 weeks"
+      validation_gates:
+        - service_quality_gate
+        - api_contract_compliance
+        - security_tests_passing
+        - performance_benchmarks_met
+      sequence:
+        - step: api_story_creation
+          agent: sm
+          action: create API endpoint stories
+          creates: api-stories.md
+          requires: sharded_docs
+          tools: [sa_create_story]
+          notes: "Create stories for individual API endpoints"
+
+        - step: service_layer_stories
+          agent: sm
+          action: create service layer stories
+          creates: service-stories.md
+          requires: sharded_docs
+          tools: [sa_create_story]
+          notes: "Create stories for business logic and service layers"
+
+        - step: data_layer_stories
+          agent: sm
+          action: create data layer stories
+          creates: data-stories.md
+          requires: sharded_docs
+          tools: [sa_create_story]
+          notes: "Create stories for data access and persistence layers"
+
+        - step: api_implementation
+          agent: dev
+          action: implement API endpoints
+          creates: [api_code, api_tests]
+          requires: api-stories.md
+          tools: [sa_implement_story, sa_run_tests]
+          repeats: for_each_endpoint
+          notes: "Implement API endpoints with comprehensive testing"
+
+        - step: business_logic_implementation
+          agent: dev
+          action: implement business logic
+          creates: [service_code, service_tests]
+          requires: service-stories.md
+          tools: [sa_implement_story, sa_run_tests]
+          notes: "Implement core business logic with unit tests"
+
+        - step: data_layer_implementation
+          agent: dev
+          action: implement data access layer
+          creates: [data_code, data_tests]
+          requires: data-stories.md
+          tools: [sa_implement_story, sa_run_tests]
+          notes: "Implement data access layer with comprehensive testing"
+
+        - step: integration_testing
+          agent: qa
+          action: conduct integration testing
+          creates: integration-test-results.md
+          requires: [api_code, service_code, data_code]
+          tools: [sa_run_tests, sa_validate_implementation]
+          notes: "Comprehensive integration testing of all service layers"
+
+        - step: contract_testing
+          agent: qa
+          action: validate API contract compliance
+          requires: api_code
+          tools: [sa_validate_implementation]
+          notes: "Validate API implementation against contracts"
+
+        - step: security_testing
+          agent: qa
+          action: conduct security testing
+          creates: security-test-results.md
+          requires: [api_code, service_code]
+          tools: [sa_validate_quality]
+          notes: "Security vulnerability testing and validation"
+
+        - step: performance_testing
+          agent: qa
+          action: conduct performance testing
+          creates: performance-test-results.md
+          requires: integration-test-results.md
+          tools: [sa_validate_quality]
+          notes: "Load testing and performance validation"
+
+        - step: documentation_generation
+          agent: dev
+          action: generate API documentation
+          creates: api-docs/
+          requires: api_code
+          tools: [sa_implement_story]
+          notes: "Generate comprehensive API documentation"
+
+  validation_gates_config:
+    service_requirements_defined:
+      description: "Service requirements clearly defined"
+      rules:
+        - business_requirements_complete
+        - functional_requirements_specified
+        - non_functional_requirements_defined
+        - success_criteria_established
+      blocking: true
+      auto_fix: false
+
+    api_contract_specified:
+      description: "API contracts properly specified"
+      rules:
+        - api_endpoints_defined
+        - request_response_schemas_complete
+        - error_handling_specified
+        - authentication_requirements_clear
+      blocking: true
+      auto_fix: false
+
+    api_design_approved:
+      description: "API design approved and validated"
+      rules:
+        - rest_principles_followed
+        - consistent_naming_conventions
+        - proper_http_methods_used
+        - versioning_strategy_defined
+      blocking: true
+      auto_fix: false
+
+    architecture_approved:
+      description: "Service architecture approved"
+      rules:
+        - layered_architecture_proper
+        - separation_of_concerns_maintained
+        - dependency_injection_planned
+        - configuration_management_designed
+      blocking: true
+      auto_fix: false
+
+    scalability_validated:
+      description: "Scalability design validated"
+      rules:
+        - horizontal_scaling_supported
+        - stateless_design_achieved
+        - caching_strategy_defined
+        - database_scaling_planned
+      blocking: true
+      auto_fix: false
+
+    security_validated:
+      description: "Security design validated"
+      rules:
+        - authentication_mechanism_secure
+        - authorization_properly_designed
+        - data_encryption_planned
+        - input_validation_comprehensive
+      blocking: true
+      auto_fix: false
+
+    development_environment_ready:
+      description: "Development environment ready"
+      rules:
+        - local_development_setup_complete
+        - database_setup_automated
+        - configuration_management_ready
+        - debugging_tools_configured
+      blocking: true
+      auto_fix: true
+
+    ci_cd_configured:
+      description: "CI/CD pipeline configured"
+      rules:
+        - automated_testing_pipeline_ready
+        - code_quality_checks_configured
+        - deployment_automation_complete
+        - monitoring_integration_ready
+      blocking: false
+      auto_fix: true
+
+    service_quality_gate:
+      description: "Service quality standards met"
+      rules:
+        - code_coverage_adequate
+        - code_style_compliant
+        - no_critical_vulnerabilities
+        - documentation_complete
+      blocking: true
+      auto_fix: true
+
+    api_contract_compliance:
+      description: "API implementation complies with contracts"
+      rules:
+        - openapi_specification_compliance
+        - response_schemas_match
+        - error_responses_consistent
+        - status_codes_appropriate
+      blocking: true
+      auto_fix: false
+
+    security_tests_passing:
+      description: "Security tests passing"
+      rules:
+        - vulnerability_scan_clean
+        - authentication_tests_passing
+        - authorization_tests_passing
+        - input_validation_tests_passing
+      blocking: true
+      auto_fix: false
+
+    performance_benchmarks_met:
+      description: "Performance benchmarks met"
+      rules:
+        - response_time_under_threshold
+        - throughput_meets_requirements
+        - resource_usage_acceptable
+        - scalability_tests_passing
+      blocking: true
+      auto_fix: false
+
+  flow_diagram: |
+    ```mermaid
+    graph TD
+        A[Start: Service Development] --> B[Service Planning]
+        B --> B1[Service Brief]
+        B1 --> B2[API Requirements]
+        B2 --> B3[Service PRD]
+        B3 --> B4{Planning Gates}
+        B4 -->|Pass| C[API Design]
+        B4 -->|Fail| B1
+
+        C --> C1[API Contract Design]
+        C1 --> C2[Data Model Design]
+        C2 --> C3[Integration Planning]
+        C3 --> C4{API Design Gates}
+        C4 -->|Pass| D[Architecture]
+        C4 -->|Fail| C1
+
+        D --> D1[Technology Selection]
+        D1 --> D2[Architecture Design]
+        D2 --> D3[Security Design]
+        D3 --> D4[Deployment Architecture]
+        D4 --> D5{Architecture Gates}
+        D5 -->|Pass| E[Validation]
+        D5 -->|Fail| D1
+
+        E --> E1[Architecture Review]
+        E1 --> E2[Security Review]
+        E2 --> E3[Scalability Review]
+        E3 --> E4{Validation Gates}
+        E4 -->|Pass| F[Preparation]
+        E4 -->|Fail| E1
+
+        F --> F1[Project Scaffolding]
+        F1 --> F2[Development Environment]
+        F2 --> F3[CI/CD Setup]
+        F3 --> F4[Document Sharding]
+        F4 --> F5{Preparation Gates}
+        F5 -->|Pass| G[Development]
+        F5 -->|Fail| F1
+
+        G --> G1[Create Stories]
+        G1 --> G2[API Implementation]
+        G2 --> G3[Business Logic Implementation]
+        G3 --> G4[Data Layer Implementation]
+        G4 --> G5[Integration Testing]
+        G5 --> G6[Contract Testing]
+        G6 --> G7[Security Testing]
+        G7 --> G8[Performance Testing]
+        G8 --> G9[Documentation Generation]
+        G9 --> G10{Quality Gates}
+        G10 -->|Pass| H[Service Complete]
+        G10 -->|Fail| G2
+
+        style H fill:#90EE90
+        style B4 fill:#FFB6C1
+        style C4 fill:#FFB6C1
+        style D5 fill:#FFB6C1
+        style E4 fill:#FFB6C1
+        style F5 fill:#FFB6C1
+        style G10 fill:#FFB6C1
+    ```
+
+  quality_metrics:
+    code_coverage_threshold: 85
+    api_response_time_limit: "200ms"
+    throughput_requirement: "1000_rps"
+    security_scan_threshold: "zero_critical_high"
+
+  automation:
+    auto_progression: false
+    auto_fix_enabled: true
+    continuous_validation: true
+    automated_testing: true
+    security_scanning: true
+    performance_monitoring: true
+
+  integration:
+    required_tools:
+      - sa_create_brief
+      - sa_generate_prd
+      - sa_design_system
+      - sa_create_architecture
+      - sa_implement_story
+      - sa_run_tests
+      - sa_validate_implementation
