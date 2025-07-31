@@ -132,8 +132,8 @@ export default class ClaudeCodeIntegrator extends EventEmitter {
       // Create .claude directory structure
       await this.createClaudeDirectoryStructure(claudeDir);
 
-      // Generate Claude Code settings
-      await this.generateClaudeSettings(claudeDir, config);
+      // Note: Claude Code settings are managed by Claude Code itself
+      // We no longer generate settings.json to avoid conflicts with permissions
 
       // Generate custom slash commands
       if (config.autoGenerateCommands) {
@@ -204,7 +204,8 @@ export default class ClaudeCodeIntegrator extends EventEmitter {
       }
     };
 
-    const configPath = join(config.projectRoot, config.mcpConfigFile);
+    // Place mcp-config.json in .claude directory instead of project root
+    const configPath = join(config.projectRoot, config.claudeConfigPath, config.mcpConfigFile);
     await writeFile(configPath, JSON.stringify(mcpConfig, null, 2));
     
     this.generatedFiles.set(configPath, 'mcp-config');
@@ -213,6 +214,8 @@ export default class ClaudeCodeIntegrator extends EventEmitter {
 
   /**
    * Generate Claude Code settings
+   * @deprecated This function is kept for backward compatibility but should not be used.
+   * Claude Code manages its own settings.json file and permissions.
    * @param {string} claudeDir - Claude directory path  
    * @param {Object} config - Configuration
    * @returns {Promise<void>}
