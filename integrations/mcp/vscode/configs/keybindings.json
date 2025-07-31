@@ -1,0 +1,71 @@
+[
+  {
+    "key": "ctrl+shift+a r",
+    "mac": "cmd+shift+a r",
+    "command": "workbench.action.tasks.runTask",
+    "args": "SA: Start Analyst Research",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+a p",
+    "mac": "cmd+shift+a p", 
+    "command": "workbench.action.tasks.runTask",
+    "args": "SA: Create PRD with PM",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+a d",
+    "mac": "cmd+shift+a d",
+    "command": "workbench.action.tasks.runTask", 
+    "args": "SA: Design Architecture",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+a i",
+    "mac": "cmd+shift+a i",
+    "command": "workbench.action.tasks.runTask",
+    "args": "SA: Implement Story",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+a c",
+    "mac": "cmd+shift+a c",
+    "command": "workbench.action.tasks.runTask",
+    "args": "SA: Review Code",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+shift+a t",
+    "mac": "cmd+shift+a t",
+    "command": "workbench.action.tasks.runTask",
+    "args": "SA: Track Progress",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+a l",
+    "mac": "cmd+shift+a l",
+    "command": "workbench.action.tasks.runTask",
+    "args": "SA: List Tasks", 
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+a v",
+    "mac": "cmd+shift+a v",
+    "command": "workbench.action.tasks.runTask",
+    "args": "SA: Validate Dependencies",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+a n",
+    "mac": "cmd+shift+a n",
+    "command": "workbench.action.tasks.runTask",
+    "args": "SA: Initialize Project",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+a ctrl+shift+a",
+    "mac": "cmd+shift+a cmd+shift+a",
+    "command": "workbench.action.showCommands",
+    "when": "!terminalFocus"
+  }
+]

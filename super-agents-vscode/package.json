@@ -1,0 +1,237 @@
+{
+  "name": "super-agents-vscode",
+  "displayName": "Super Agents",
+  "description": "AI-powered development assistance through specialized agents and automated workflows",
+  "version": "1.0.0",
+  "publisher": "super-agents",
+  "engines": {
+    "vscode": "^1.74.0",
+    "node": ">=18.0.0"
+  },
+  "categories": [
+    "AI",
+    "Productivity",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "agents",
+    "workflow",
+    "productivity",
+    "development",
+    "claude",
+    "mcp"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Super Agents",
+      "properties": {
+        "superAgents.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Super Agents extension"
+        },
+        "superAgents.mcpServerPath": {
+          "type": "string",
+          "default": "./sa-engine/mcp-server/index.js",
+          "description": "Path to the MCP server"
+        },
+        "superAgents.projectRoot": {
+          "type": "string",
+          "default": ".",
+          "description": "Super Agents project root directory"
+        },
+        "superAgents.logLevel": {
+          "type": "string",
+          "enum": ["error", "warn", "info", "debug"],
+          "default": "info",
+          "description": "Logging level for Super Agents"
+        },
+        "superAgents.autoStartMcp": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically start MCP server when extension activates"
+        },
+        "superAgents.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Super Agents status in status bar"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "superAgents.startAnalystResearch",
+        "title": "Start Analyst Research",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.createPRD",
+        "title": "Create PRD with PM",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.designArchitecture",
+        "title": "Design Architecture",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.implementStory",
+        "title": "Implement Story",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.reviewCode",
+        "title": "Review Code",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.trackProgress",
+        "title": "Track Workflow Progress",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.validateDependencies",
+        "title": "Validate Dependencies",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.initializeProject",
+        "title": "Initialize Project",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.listTasks",
+        "title": "List Tasks",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.createStory",
+        "title": "Create Story",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.runTests",
+        "title": "Run Tests",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.startWorkflow",
+        "title": "Start Workflow",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.showTasks",
+        "title": "Show Tasks",
+        "category": "Super Agents"
+      },
+      {
+        "command": "superAgents.refreshTasks",
+        "title": "Refresh Tasks",
+        "category": "Super Agents",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "superAgents.toggleMcpServer",
+        "title": "Toggle MCP Server",
+        "category": "Super Agents"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "superAgents.startAnalystResearch",
+        "key": "ctrl+shift+a r",
+        "mac": "cmd+shift+a r"
+      },
+      {
+        "command": "superAgents.createPRD",
+        "key": "ctrl+shift+a p",
+        "mac": "cmd+shift+a p"
+      },
+      {
+        "command": "superAgents.implementStory",
+        "key": "ctrl+shift+a i",
+        "mac": "cmd+shift+a i"
+      },
+      {
+        "command": "superAgents.reviewCode",
+        "key": "ctrl+shift+a c",
+        "mac": "cmd+shift+a c"
+      },
+      {
+        "command": "superAgents.showTasks",
+        "key": "ctrl+shift+a t",
+        "mac": "cmd+shift+a t"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "superAgentsTasks",
+          "name": "Super Agents Tasks",
+          "when": "superAgents.enabled"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "superAgents",
+          "title": "Super Agents",
+          "icon": "$(robot)"
+        }
+      ]
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "superAgents.refreshTasks",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "superAgents.refreshTasks",
+          "when": "view == superAgentsTasks",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.4",
+    "@vscode/test-cli": "^0.0.1",
+    "@vscode/test-electron": "^2.2.0",
+    "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/super-agents/super-agents-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/super-agents/super-agents-vscode/issues"
+  },
+  "homepage": "https://github.com/super-agents/super-agents-vscode#readme",
+  "license": "MIT"
+}

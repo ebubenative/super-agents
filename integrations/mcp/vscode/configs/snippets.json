@@ -1,0 +1,222 @@
+{
+  "javascript": {
+    "Super Agents Research Tool": {
+      "prefix": "sa-research",
+      "body": [
+        "// Super Agents Research Tool",
+        "const research = {",
+        "  tool: 'sa-research-market',",
+        "  topic: '${1:research topic}',",
+        "  depth: '${2|basic,comprehensive|}', ",
+        "  focus: '${3:market analysis}'",
+        "};",
+        "",
+        "// Execute: node sa-engine/mcp-server/index.js --tool=sa-research-market --topic=\"${1:research topic}\"",
+        "$0"
+      ],
+      "description": "Super Agents market research tool template"
+    },
+    "Super Agents PRD Tool": {
+      "prefix": "sa-prd",
+      "body": [
+        "// Super Agents PRD Generation Tool",
+        "const prd = {",
+        "  tool: 'sa-generate-prd',",
+        "  feature: '${1:feature description}',",
+        "  scope: '${2|basic,detailed,comprehensive|}',",
+        "  stakeholders: ['${3:stakeholder1}', '${4:stakeholder2}']",
+        "};",
+        "",
+        "// Execute: node sa-engine/mcp-server/index.js --tool=sa-generate-prd --feature=\"${1:feature description}\"",
+        "$0"
+      ],
+      "description": "Super Agents PRD generation tool template"
+    },
+    "Super Agents Architecture Tool": {
+      "prefix": "sa-arch", 
+      "body": [
+        "// Super Agents Architecture Design Tool",
+        "const architecture = {",
+        "  tool: 'sa-create-architecture',",
+        "  system: '${1:system description}',",
+        "  type: '${2|microservices,monolith,serverless,hybrid|}',",
+        "  scale: '${3|small,medium,large,enterprise|}',",
+        "  requirements: ['${4:requirement1}', '${5:requirement2}']",
+        "};",
+        "",
+        "// Execute: node sa-engine/mcp-server/index.js --tool=sa-create-architecture --system=\"${1:system description}\"",
+        "$0"
+      ],
+      "description": "Super Agents architecture design tool template"
+    },
+    "Super Agents Story Tool": {
+      "prefix": "sa-story",
+      "body": [
+        "// Super Agents Story Implementation Tool",
+        "const story = {",
+        "  tool: 'sa-implement-story',",
+        "  story_id: '${1:US-001}',",
+        "  title: '${2:story title}',",
+        "  priority: '${3|high,medium,low|}',",
+        "  include_tests: ${4|true,false|}",
+        "};",
+        "",
+        "// Execute: node sa-engine/mcp-server/index.js --tool=sa-implement-story --story=\"${1:US-001}\"",
+        "$0"
+      ],
+      "description": "Super Agents story implementation tool template"
+    },
+    "Super Agents Code Review Tool": {
+      "prefix": "sa-review",
+      "body": [
+        "// Super Agents Code Review Tool",
+        "const review = {",
+        "  tool: 'sa-review-code',", 
+        "  file_path: '${1:./src/component.js}',",
+        "  review_type: '${2|basic,comprehensive,security,performance|}',",
+        "  focus_areas: ['${3:code quality}', '${4:best practices}']",
+        "};",
+        "",
+        "// Execute: node sa-engine/mcp-server/index.js --tool=sa-review-code --file=\"${1:./src/component.js}\"",
+        "$0"
+      ],
+      "description": "Super Agents code review tool template"
+    }
+  },
+  "typescript": {
+    "Super Agents Task Interface": {
+      "prefix": "sa-task-interface",
+      "body": [
+        "interface SuperAgentsTask {",
+        "  id: string;",
+        "  title: string;",
+        "  description: string;",
+        "  status: 'pending' | 'in_progress' | 'completed';",
+        "  priority: 'high' | 'medium' | 'low';",
+        "  agent: '${1|analyst,pm,architect,developer,qa,product-owner,ux-expert,scrum-master|}';",
+        "  tool: string;",
+        "  parameters: Record<string, any>;",
+        "  dependencies?: string[];",
+        "  created_at: Date;",
+        "  updated_at: Date;",
+        "}",
+        "",
+        "$0"
+      ],
+      "description": "Super Agents task interface definition"
+    },
+    "Super Agents MCP Call": {
+      "prefix": "sa-mcp-call",
+      "body": [
+        "import { MCPClient } from '../mcpClient';",
+        "",
+        "async function call${1:ToolName}(mcpClient: MCPClient) {",
+        "  try {",
+        "    const response = await mcpClient.callTool('${2:sa-tool-name}', {",
+        "      ${3:parameter}: '${4:value}'",
+        "    });",
+        "    ",
+        "    console.log('Tool response:', response);",
+        "    return response;",
+        "  } catch (error) {",
+        "    console.error('Tool call failed:', error);",
+        "    throw error;",
+        "  }",
+        "}",
+        "",
+        "$0"
+      ],
+      "description": "Super Agents MCP tool call template"
+    }
+  },
+  "json": {
+    "Super Agents Workspace Config": {
+      "prefix": "sa-workspace",
+      "body": [
+        "{",
+        "  \"settings\": {",
+        "    \"super-agents.enabled\": true,",
+        "    \"super-agents.mcpServerPath\": \"./sa-engine/mcp-server/index.js\",",
+        "    \"super-agents.projectRoot\": \".\",",
+        "    \"super-agents.logLevel\": \"${1|error,warn,info,debug|}\",",
+        "    \"super-agents.autoStartMcp\": ${2|true,false|}",
+        "  },",
+        "  \"extensions\": {",
+        "    \"recommendations\": [",
+        "      \"super-agents.super-agents-vscode\"",
+        "    ]",
+        "  }",
+        "}",
+        "$0"
+      ],
+      "description": "Super Agents workspace configuration"
+    },
+    "Super Agents Task Definition": {
+      "prefix": "sa-task-def",
+      "body": [
+        "{",
+        "  \"label\": \"SA: ${1:Task Name}\",",
+        "  \"type\": \"shell\",",
+        "  \"command\": \"node\",",
+        "  \"args\": [",
+        "    \"sa-engine/mcp-server/index.js\",",
+        "    \"--tool=${2:sa-tool-name}\",",
+        "    \"--${3:parameter}=\\${input:${4:inputId}}\"",
+        "  ],",
+        "  \"group\": \"build\",",
+        "  \"presentation\": {",
+        "    \"echo\": true,",
+        "    \"reveal\": \"always\",",
+        "    \"focus\": false,",
+        "    \"panel\": \"shared\"",
+        "  }",
+        "}",
+        "$0"
+      ],
+      "description": "Super Agents task definition for VS Code tasks.json"
+    }
+  },
+  "markdown": {
+    "Super Agents Documentation": {
+      "prefix": "sa-docs",
+      "body": [
+        "# ${1:Project Name} - Super Agents Integration",
+        "",
+        "## Available Agents",
+        "",
+        "- **Analyst**: ${2:Market research and analysis}",
+        "- **PM**: ${3:Product requirements and planning}", 
+        "- **Architect**: ${4:System design and architecture}",
+        "- **Developer**: ${5:Implementation and coding}",
+        "- **QA**: ${6:Code review and quality assurance}",
+        "- **Product Owner**: ${7:Story validation and management}",
+        "- **UX Expert**: ${8:Frontend and user experience}",
+        "- **Scrum Master**: ${9:Workflow and progress management}",
+        "",
+        "## Quick Commands",
+        "",
+        "### Research",
+        "```bash",
+        "# Market research",
+        "node sa-engine/mcp-server/index.js --tool=sa-research-market --topic=\"${10:research topic}\"",
+        "```",
+        "",
+        "### Development",
+        "```bash", 
+        "# Create PRD",
+        "node sa-engine/mcp-server/index.js --tool=sa-generate-prd --feature=\"${11:feature description}\"",
+        "",
+        "# Design architecture",
+        "node sa-engine/mcp-server/index.js --tool=sa-create-architecture --system=\"${12:system description}\"",
+        "```",
+        "",
+        "## VS Code Integration",
+        "",
+        "Use `Ctrl+Shift+P` (or `Cmd+Shift+P`) and search for \"SA:\" to access all Super Agents commands.",
+        "",
+        "$0"
+      ],
+      "description": "Super Agents project documentation template"
+    }
+  }
+}

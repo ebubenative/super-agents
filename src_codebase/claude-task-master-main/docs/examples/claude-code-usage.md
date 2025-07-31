@@ -64,11 +64,12 @@ task-master set-status --id=task-001 --status=in-progress
    ```bash
    npm install @anthropic-ai/claude-code
    ```
-3. Run Claude Code for the first time and authenticate with your Anthropic account:
+3. Run Claude Code for the first time to authenticate with your Anthropic account:
    ```bash
-   claude
+   claude-code
    ```
-4. No API key is required in your environment variables or MCP configuration
+
+**Note**: No API key configuration is required - Claude Code handles authentication internally.
 
 ## Advanced Settings
 

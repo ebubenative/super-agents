@@ -67,3 +67,4 @@ build/
 # Test outputs
 test-results/
 coverage/
+src_codebase/

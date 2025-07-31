@@ -1,0 +1,19 @@
+name: code-quality-check
+description: Automated code quality assessment
+version: 1.0.0
+created: '2025-07-30T19:29:04.580Z'
+trigger: git-hook
+steps:
+  - type: sa-tool
+    name: Review Code Quality
+    tool: sa-review-code
+    params:
+      path: .
+  - type: sa-tool
+    name: Validate Implementation
+    tool: sa-validate-implementation
+  - type: command
+    name: Run Tests
+    command: npm test
+environment: {}
+notifications: {}

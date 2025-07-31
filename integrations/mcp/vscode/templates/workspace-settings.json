@@ -1,0 +1,239 @@
+{
+  "settings": {
+    "super-agents.enabled": true,
+    "super-agents.mcpServerPath": "./sa-engine/mcp-server/index.js",
+    "super-agents.projectRoot": ".",
+    "super-agents.logLevel": "info",
+    "super-agents.autoStartMcp": true,
+    "super-agents.showStatusBar": true,
+    "super-agents.agentPath": ".vscode/agents/",
+    "super-agents.workflowPath": ".vscode/workflows/",
+    "super-agents.taskManagement": true,
+    "super-agents.enableNotifications": true,
+    "super-agents.outputChannelLevel": "info"
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "SA: Start Analyst Research",
+        "type": "shell",
+        "command": "node",
+        "args": ["sa-engine/mcp-server/index.js", "--tool=sa-research-market", "--topic=${input:researchTopic}"],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "options": {
+          "env": {
+            "SA_PROJECT_ROOT": "${workspaceFolder}",
+            "SA_LOG_LEVEL": "info"
+          }
+        }
+      },
+      {
+        "label": "SA: Create PRD with PM",
+        "type": "shell",
+        "command": "node",
+        "args": ["sa-engine/mcp-server/index.js", "--tool=sa-generate-prd", "--feature=${input:featureDescription}"],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "SA: Design Architecture",
+        "type": "shell",
+        "command": "node",
+        "args": ["sa-engine/mcp-server/index.js", "--tool=sa-create-architecture", "--system=${input:systemDescription}"],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "SA: Implement Story",
+        "type": "shell",
+        "command": "node",
+        "args": ["sa-engine/mcp-server/index.js", "--tool=sa-implement-story", "--story=${input:storyId}"],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "SA: Review Code",
+        "type": "shell",
+        "command": "node",
+        "args": ["sa-engine/mcp-server/index.js", "--tool=sa-review-code", "--file=${file}"],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "SA: Track Progress",
+        "type": "shell",
+        "command": "node",
+        "args": ["sa-engine/mcp-server/index.js", "--tool=sa-track-progress"],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "SA: Initialize Project",
+        "type": "shell",
+        "command": "node",
+        "args": ["sa-engine/mcp-server/index.js", "--tool=sa-initialize-project", "--name=${input:projectName}"],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "SA: List Tasks",
+        "type": "shell",
+        "command": "node",
+        "args": ["sa-engine/mcp-server/index.js", "--tool=sa-list-tasks"],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "SA: Validate Dependencies",
+        "type": "shell",
+        "command": "node",
+        "args": ["sa-engine/mcp-server/index.js", "--tool=sa-validate-dependencies"],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      }
+    ],
+    "inputs": [
+      {
+        "id": "researchTopic",
+        "description": "Enter research topic",
+        "default": "Market analysis",
+        "type": "promptString"
+      },
+      {
+        "id": "featureDescription",
+        "description": "Enter feature description",
+        "default": "User authentication system",
+        "type": "promptString"
+      },
+      {
+        "id": "systemDescription",
+        "description": "Enter system description",
+        "default": "Web application architecture",
+        "type": "promptString"
+      },
+      {
+        "id": "storyId",
+        "description": "Enter story ID or description",
+        "default": "US-001",
+        "type": "promptString"
+      },
+      {
+        "id": "projectName",
+        "description": "Enter project name",
+        "default": "my-project",
+        "type": "promptString"
+      }
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug SA MCP Server",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/sa-engine/mcp-server/index.js",
+        "env": {
+          "SA_PROJECT_ROOT": "${workspaceFolder}",
+          "SA_LOG_LEVEL": "debug",
+          "NODE_ENV": "development"
+        },
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen"
+      },
+      {
+        "name": "Debug SA Tool",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/sa-engine/mcp-server/index.js",
+        "args": ["--tool=${input:debugTool}", "--debug"],
+        "env": {
+          "SA_PROJECT_ROOT": "${workspaceFolder}",
+          "SA_LOG_LEVEL": "debug"
+        },
+        "console": "integratedTerminal"
+      }
+    ],
+    "inputs": [
+      {
+        "id": "debugTool",
+        "description": "Select tool to debug",
+        "type": "pickString",
+        "options": [
+          "sa-research-market",
+          "sa-generate-prd", 
+          "sa-create-architecture",
+          "sa-implement-story",
+          "sa-review-code",
+          "sa-list-tasks",
+          "sa-initialize-project"
+        ]
+      }
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "super-agents.super-agents-vscode",
+      "github.copilot",
+      "ms-vscode.vscode-ai",
+      "ms-python.python",
+      "ms-vscode.vscode-typescript-next",
+      "bradlc.vscode-tailwindcss",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-eslint"
+    ]
+  },
+  "folders": [
+    {
+      "name": "Super Agents Project",
+      "path": "."
+    }
+  ]
+}

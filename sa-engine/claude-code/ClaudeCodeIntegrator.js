@@ -55,7 +55,7 @@ export default class ClaudeCodeIntegrator extends EventEmitter {
         logLevel: integrationConfig.logLevel
       });
 
-      await this.toolRegistry.loadAllTools();
+      await this.toolRegistry.initialize();
 
       // Setup MCP server if not in standalone mode
       if (!integrationConfig.standaloneMode) {
@@ -68,7 +68,7 @@ export default class ClaudeCodeIntegrator extends EventEmitter {
       this.isIntegrated = true;
       this.log('Claude Code integration completed successfully');
       this.emit('integrationCompleted', { 
-        toolCount: this.toolRegistry?.getToolCount() || 0,
+        toolCount: this.toolRegistry?.tools?.size || 0,
         generatedFiles: this.generatedFiles.size
       });
 
@@ -98,9 +98,9 @@ export default class ClaudeCodeIntegrator extends EventEmitter {
       });
 
       // Register all tools from the tool registry
-      if (this.toolRegistry) {
-        const tools = this.toolRegistry.getAllTools();
-        for (const [toolName, tool] of tools) {
+      if (this.toolRegistry && this.toolRegistry.tools) {
+        const tools = Array.from(this.toolRegistry.tools.values());
+        for (const tool of tools) {
           this.mcpServer.registerTool(tool);
         }
       }
@@ -180,7 +180,7 @@ export default class ClaudeCodeIntegrator extends EventEmitter {
       }
     }
 
-    this.log('Claude directory structure created', { claudeDir });
+    this.log('Claude directory structure created', { claudeDir, subdirs });
   }
 
   /**
@@ -258,17 +258,18 @@ export default class ClaudeCodeIntegrator extends EventEmitter {
     const commandsDir = join(claudeDir, 'commands');
     
     // Get all tools from registry
-    const tools = this.toolRegistry ? this.toolRegistry.getAllTools() : new Map();
+    const tools = this.toolRegistry && this.toolRegistry.tools ? 
+      Array.from(this.toolRegistry.tools.values()) : [];
     
     // Group tools by agent/category
     const toolsByCategory = new Map();
     
-    for (const [toolName, tool] of tools) {
+    for (const tool of tools) {
       const category = tool.category || 'general';
       if (!toolsByCategory.has(category)) {
         toolsByCategory.set(category, []);
       }
-      toolsByCategory.get(category).push({ name: toolName, tool });
+      toolsByCategory.get(category).push({ name: tool.name, tool });
     }
 
     // Generate commands for each category
@@ -408,32 +409,65 @@ This provides comprehensive visibility into your project's progress using the Su
    * @returns {Promise<void>}
    */
   async generateAgentDocumentation(agentsDir, agentName, agentConfig) {
-    const agentDoc = `# ${agentConfig.name}
+    // Get available tools for this agent
+    const agentTools = this.getAgentTools(agentName);
+    const toolNames = agentTools.map(tool => tool.name.replace('sa-', '')).join(', ');
+    
+    // Generate 2025 Claude Code subagent format with YAML frontmatter
+    const agentDoc = `---
+name: ${agentName}
+description: Use proactively for ${agentConfig.agent?.whenToUse || agentConfig.persona?.identity || `${agentName} tasks`}
+tools: ${toolNames || 'core, workflow'}
+---
 
-${agentConfig.description}
+# ${agentConfig.agent?.name || agentConfig.name} - ${agentConfig.agent?.title || 'Super Agents Specialist'}
 
-## Role
-${agentConfig.role}
+You are ${agentConfig.persona?.identity || `a specialized ${agentName} agent`} within the Super Agents framework.
 
-## Responsibilities
-${agentConfig.responsibilities.map(r => `- ${r}`).join('\n')}
+## Your Role
+${agentConfig.persona?.role || agentConfig.role || `Expert ${agentName} specializing in ${agentName}-specific tasks`}
 
-## Tools Available
-${this.getAgentTools(agentName).map(tool => `- **${tool.name}**: ${tool.description}`).join('\n')}
+## Your Core Principles
+${agentConfig.persona?.core_principles ? agentConfig.persona.core_principles.map(p => `- ${p}`).join('\n') : 
+  agentConfig.responsibilities ? agentConfig.responsibilities.map(r => `- ${r}`).join('\n') :
+  `- Provide expert ${agentName} guidance and solutions
+- Follow Super Agents methodology and best practices
+- Collaborate effectively with other agents in the framework
+- Deliver high-quality, actionable results`}
 
-## Usage Patterns
-This agent is specialized for ${agentConfig.specialization || agentName} tasks within the Super Agents framework.
+## Your Capabilities
+${agentConfig.capabilities?.commands ? 
+  agentConfig.capabilities.commands.map(cmd => `- **${cmd.name}**: ${cmd.description}`).join('\n') :
+  agentTools.length > 0 ? 
+  agentTools.map(tool => `- **${tool.name}**: ${tool.description}`).join('\n') :
+  `- Specialized ${agentName} functionality within Super Agents framework`}
 
-### Key Capabilities
-${agentConfig.capabilities ? agentConfig.capabilities.map(c => `- ${c}`).join('\n') : `- Specialized ${agentName} functionality`}
+## Your Approach
+- **${agentConfig.persona?.style || 'Professional, thorough, collaborative'}**
+- **Focus**: ${agentConfig.persona?.focus || `${agentName} excellence and quality delivery`}
+- **Methodology**: Follow Super Agents structured approach for ${agentName} tasks
+- **Collaboration**: Work seamlessly with other Super Agents team members
 
-### Collaboration
-Works with other agents in the Super Agents ecosystem to deliver comprehensive solutions.
+## When to Use This Agent
+${agentConfig.agent?.whenToUse || `Use proactively when ${agentName} expertise is needed for project success`}
+
+## Workflow Integration
+As a Super Agents team member, you integrate with:
+- **Analyst**: For research and requirements gathering
+- **PM**: For product requirements and planning
+- **Architect**: For system design and technical decisions
+- **Developer**: For implementation and coding tasks
+- **QA**: For quality assurance and testing
+- **Product Owner**: For story validation and acceptance
+- **UX Expert**: For user experience and interface design
+- **Scrum Master**: For workflow management and coordination
+
+Always maintain your specialized focus while supporting the overall Super Agents methodology and team collaboration.
 `;
 
     const agentPath = join(agentsDir, `${agentName}.md`);
     await writeFile(agentPath, agentDoc);
-    this.generatedFiles.set(agentPath, 'agent-doc');
+    this.generatedFiles.set(agentPath, 'agent-subagent');
   }
 
   /**
@@ -442,14 +476,14 @@ Works with other agents in the Super Agents ecosystem to deliver comprehensive s
    * @returns {Array} Array of tools
    */
   getAgentTools(agentName) {
-    if (!this.toolRegistry) return [];
+    if (!this.toolRegistry || !this.toolRegistry.tools) return [];
     
-    const tools = this.toolRegistry.getAllTools();
+    const tools = Array.from(this.toolRegistry.tools.values());
     const agentTools = [];
     
-    for (const [toolName, tool] of tools) {
-      if (tool.category === agentName || toolName.includes(agentName)) {
-        agentTools.push({ name: toolName, description: tool.description });
+    for (const tool of tools) {
+      if (tool.category === agentName || tool.name.includes(agentName)) {
+        agentTools.push({ name: tool.name, description: tool.description });
       }
     }
     
@@ -607,18 +641,18 @@ For support and documentation, refer to the Super Agents framework documentation
    * @returns {string} Tool documentation
    */
   generateToolDocumentation() {
-    if (!this.toolRegistry) return 'Tools will be available after MCP server initialization.';
+    if (!this.toolRegistry || !this.toolRegistry.tools) return 'Tools will be available after MCP server initialization.';
 
-    const tools = this.toolRegistry.getAllTools();
+    const tools = Array.from(this.toolRegistry.tools.values());
     const toolsByCategory = new Map();
 
     // Group tools by category
-    for (const [toolName, tool] of tools) {
+    for (const tool of tools) {
       const category = tool.category || 'general';
       if (!toolsByCategory.has(category)) {
         toolsByCategory.set(category, []);
       }
-      toolsByCategory.get(category).push({ name: toolName, tool });
+      toolsByCategory.get(category).push({ name: tool.name, tool });
     }
 
     let documentation = '';
@@ -679,7 +713,7 @@ For support and documentation, refer to the Super Agents framework documentation
     return {
       isIntegrated: this.isIntegrated,
       mcpServerActive: this.mcpServer?.isRunning || false,
-      toolCount: this.toolRegistry?.getToolCount() || 0,
+      toolCount: this.toolRegistry?.tools?.size || 0,
       generatedFiles: this.generatedFiles.size,
       generatedFileTypes: Array.from(new Set(this.generatedFiles.values())),
       options: this.options

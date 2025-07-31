@@ -87,7 +87,6 @@ Task Master provides an MCP server that Claude Code can connect to. Configure in
       "command": "npx",
       "args": ["-y", "--package=task-master-ai", "task-master-ai"],
       "env": {
-        "ANTHROPIC_API_KEY": "your_key_here",
         "PERPLEXITY_API_KEY": "your_key_here",
         "OPENAI_API_KEY": "OPENAI_API_KEY_HERE",
         "GOOGLE_API_KEY": "GOOGLE_API_KEY_HERE",
@@ -101,6 +100,8 @@ Task Master provides an MCP server that Claude Code can connect to. Configure in
   }
 }
 ```
+
+**Note**: When using Claude Code, you don't need to provide `ANTHROPIC_API_KEY` as Claude Code handles Anthropic authentication internally.
 
 ### Essential MCP Tools
 
@@ -229,7 +230,7 @@ Add to `.claude/settings.json`:
 
 At least **one** of these API keys must be configured:
 
-- `ANTHROPIC_API_KEY` (Claude models) - **Recommended**
+- `ANTHROPIC_API_KEY` (Claude models) - **Recommended** (Not needed when using Claude Code)
 - `PERPLEXITY_API_KEY` (Research features) - **Highly recommended**
 - `OPENAI_API_KEY` (GPT models)
 - `GOOGLE_API_KEY` (Gemini models)
@@ -237,7 +238,7 @@ At least **one** of these API keys must be configured:
 - `OPENROUTER_API_KEY` (Multiple models)
 - `XAI_API_KEY` (Grok models)
 
-An API key is required for any provider used across any of the 3 roles defined in the `models` command.
+**Note**: When using Claude Code, `ANTHROPIC_API_KEY` is not required as authentication is handled internally. An API key is required for any other provider used across any of the 3 roles defined in the `models` command.
 
 ### Model Configuration
 

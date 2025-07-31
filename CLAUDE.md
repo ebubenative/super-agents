@@ -16,77 +16,84 @@ This project uses the Super Agents framework to provide AI-powered development a
 
 ## MCP Tools Available
 
+
 ### Analyst Tools
-- **sa-brainstorm-session**: Conduct structured brainstorming sessions for ideation and problem-solving
-- **sa-competitor-analysis**: Perform comprehensive competitive analysis and market positioning
-- **sa-create-brief**: Generate detailed project briefs and requirement summaries
-- **sa-research-market**: Conduct thorough market research and trend analysis
+- **sa_brainstorm_session**: Facilitate structured brainstorming sessions with idea collection, organization, session progress tracking, and output synthesis
+- **sa_competitor_analysis**: Conduct comprehensive competitive analysis with competitor identification, analysis framework application, competitive landscape mapping, and strategic recommendations
+- **sa_create_brief**: Create comprehensive project briefs with interactive creation workflow and stakeholder input collection
+- **sa_research_market**: Conduct comprehensive market research analysis with data collection workflows and formatted output
 
 ### Architect Tools
-- **sa-analyze-brownfield**: Analyze existing codebases and legacy system architectures
-- **sa-create-architecture**: Design comprehensive system architectures and technical specifications
-- **sa-design-system**: Create design systems and component architectures
-- **sa-tech-recommendations**: Provide technology stack recommendations and technical guidance
+- **sa_analyze_brownfield**: Analyze existing brownfield systems with technical debt assessment, migration planning, and comprehensive risk analysis
+- **sa_create_architecture**: Create comprehensive architecture documentation with template selection, documentation generation, diagram creation workflows, and architecture validation
+- **sa_design_system**: Design comprehensive system architecture using established methodologies, architecture pattern selection, component design workflows, and design validation
+- **sa_tech_recommendations**: Provide technology selection recommendations with stack analysis, framework comparison, performance considerations, and technology selection criteria
 
-### Core Tools
-- **sa-get-task**: Retrieve specific task details and information
-- **sa-initialize-project**: Set up new projects with proper structure and configuration
-- **sa-list-tasks**: List and filter project tasks with various criteria
-- **sa-update-task-status**: Update task status and progress tracking
+### Tasks Tools
+- **sa_get_task**: Get detailed information about a specific task including dependencies, history, and related files
+- **sa_list_tasks**: List and filter tasks from the Super Agents task management system
+- **sa_update_task_status**: Update the status of a task with validation, notifications, and change tracking
+
+### Project Tools
+- **sa_initialize_project**: Initialize a new Super Agents project with templates, configuration, and initial task setup
 
 ### Dependencies Tools
-- **sa-add-dependency**: Add new task dependencies and relationships
-- **sa-dependency-graph**: Generate and visualize project dependency graphs
-- **sa-remove-dependency**: Remove task dependencies and update relationships
-- **sa-validate-dependencies**: Validate dependency chains and detect circular dependencies
+- **sa_add_dependency**: Add dependencies between tasks with cycle detection and dependency type specification
+- **sa_dependency_graph**: Generate dependency graph visualization in multiple formats with interactive exploration capabilities
+- **sa_remove_dependency**: Remove dependencies between tasks with impact analysis and safe cascade handling
+- **sa_validate_dependencies**: Comprehensive dependency validation with cycle detection, logical consistency checking, and dependency health assessment
 
 ### Developer Tools
-- **sa-debug-issue**: Debug and troubleshoot code issues and technical problems
-- **sa-implement-story**: Implement user stories and feature requirements
-- **sa-run-tests**: Execute test suites and validate implementations
-- **sa-validate-implementation**: Validate code implementations against requirements
+- **sa_implement_story**: Implement user stories with code generation, testing setup, development planning, and implementation workflows
+- **sa_run_tests**: Execute comprehensive test suites with coverage analysis, performance testing, and automated test management
+- **sa_validate_implementation**: Validate implementation with comprehensive code quality analysis, testing verification, performance assessment, and compliance checking
 
-### PM Tools
-- **sa-create-epic**: Create comprehensive epics with detailed specifications
-- **sa-generate-prd**: Generate Product Requirements Documents (PRDs)
-- **sa-prioritize-features**: Prioritize features and create development roadmaps
-- **sa-stakeholder-analysis**: Analyze stakeholders and their requirements
+### Pm Tools
+- **sa_create_epic**: Create and manage epics with user story breakdown, epic prioritization, and comprehensive documentation
+- **sa_generate_prd**: Generate comprehensive Product Requirements Documents with template selection, interactive creation workflow, requirements gathering, and validation
+- **sa_prioritize_features**: Prioritize features using impact analysis, priority matrix application, stakeholder feedback integration, and strategic priority recommendations
+- **sa_stakeholder_analysis**: Conduct comprehensive stakeholder analysis with identification, influence/interest mapping, communication planning, and stakeholder management workflows
 
-### Product Owner Tools
-- **sa-correct-course**: Provide course correction and project guidance
-- **sa-execute-checklist**: Execute project checklists and validation procedures
-- **sa-shard-document**: Break down large documents into manageable components
-- **sa-validate-story-draft**: Validate user story drafts and requirements
+### Product-owner Tools
+- **sa_correct_course**: Identify project issues, plan course corrections, execute remediation workflows, and monitor progress for project recovery
+- **sa_execute_checklist**: Load and execute checklists with progress tracking, validation criteria, and completion reporting for systematic workflow management
+- **sa_shard_document**: Analyze documents and break them into logical shards using intelligent strategies for better manageability and processing
+- **sa_validate_story_draft**: Validate story draft completeness, check quality criteria, validate dependencies, and manage approval workflow for user stories
 
-### QA Tools
-- **sa-refactor-code**: Refactor code for improved quality and maintainability
-- **sa-review-code**: Perform comprehensive code reviews and quality assessments
-- **sa-review-story**: Review user stories for completeness and clarity
-- **sa-validate-quality**: Validate code quality and adherence to standards
+### Qa Tools
+- **sa_refactor_code**: Analyze code for refactoring opportunities with pattern detection, technical debt assessment, and automated refactoring plan generation
+- **sa_review_code**: Conduct comprehensive code reviews with quality analysis, security assessment, performance evaluation, and improvement recommendations
+- **sa_review_story**: Review story completeness, validate acceptance criteria, and check implementation quality against requirements
+- **sa_validate_quality**: Validate code quality with comprehensive metrics analysis, standards compliance checking, quality gate enforcement, and continuous quality monitoring
 
-### Scrum Master Tools
-- **sa-create-next-story**: Create next user stories in the development sequence
-- **sa-create-story**: Create detailed user stories with acceptance criteria
-- **sa-track-progress**: Track project progress and team velocity
-- **sa-update-workflow**: Update workflow states and process improvements
+### Research Tools
+- **sa-follow-up-research**: Continue research conversations with previous context and perform follow-up queries
+- **sa-research-save**: Save research results and conversations to tasks, subtasks, or files with various formatting options
+- **sa-research**: Perform AI-powered research queries with project context awareness and intelligent task discovery
 
-### Task Master Tools
-- **sa-analyze-complexity**: Analyze task complexity and effort estimation
-- **sa-expand-task**: Expand high-level tasks into detailed subtasks
-- **sa-generate-tasks**: Generate comprehensive task lists from requirements
-- **sa-parse-prd**: Parse Product Requirements Documents into actionable tasks
+### Scrum-master Tools
+- **sa_create_next_story**: Generate next story based on project context, dependency analysis, and story prioritization workflows
+- **sa_create_story**: Create well-structured user stories with template selection, requirements breakdown, and story validation
+- **sa_track_progress**: Track sprint progress with burndown analysis, velocity tracking, team performance metrics, and predictive insights
+- **sa_update_workflow**: Update and manage agile workflows with status tracking, workflow optimization, and process improvement recommendations
 
-### UX Expert Tools
-- **sa-accessibility-audit**: Conduct accessibility audits and compliance checks
-- **sa-create-frontend-spec**: Create detailed frontend specifications and requirements
-- **sa-design-wireframes**: Design wireframes and user interface mockups
-- **sa-generate-ui-prompt**: Generate UI prompts and design guidelines
+### Task-master Tools
+- **sa_analyze_complexity**: AI-powered complexity analysis for tasks including difficulty estimation, effort analysis, and resource requirements
+- **sa_expand_task**: AI-powered task expansion to break down high-level tasks into detailed subtasks
+- **sa_generate_tasks**: AI-powered task generation from requirements, contexts, or templates with intelligent task creation
+- **sa_parse_prd**: Parse Product Requirements Document (PRD) and generate initial tasks using AI
+
+### Ux-expert Tools
+- **sa_accessibility_audit**: Conduct comprehensive accessibility audits with WCAG compliance checking, accessibility improvement suggestions, and audit reporting
+- **sa_create_frontend_spec**: Create comprehensive frontend specifications with UI/UX requirements, design system integration, and technical implementation details
+- **sa_design_wireframes**: Create wireframe specifications with user journey mapping, interface design patterns, and wireframe validation
+- **sa_generate_ui_prompt**: Generate AI UI generation prompts optimized for tools like v0, Lovable, and other AI design platforms
 
 ### Workflow Tools
-- **sa-start-workflow**: Initialize and start project workflows
-- **sa-track-progress**: Monitor workflow progress and milestone completion
-- **sa-workflow-status**: Check current workflow status and phase information
-- **sa-workflow-validation**: Validate workflow states and transitions
+- **sa_start_workflow**: Workflow initiation tool with template selection, parameter configuration, and initial state setup
+- **sa_workflow_status**: Status monitoring tool for workflow progress, active phases, and completion estimates
+- **sa_workflow_validation**: Workflow validation tool for integrity checking, dependency validation, quality gates, and compliance verification
+
 
 ## Usage Patterns
 
@@ -107,50 +114,23 @@ This project uses the Super Agents framework to provide AI-powered development a
 - QA agents review code → Product Owners validate stories → Scrum Masters track progress
 - UX Experts create specifications → Developers implement UI → QA validates accessibility
 
-### Research and Analysis
-1. Use `sa-research-market` for market analysis and trends
-2. Use `sa-competitor-analysis` to understand competitive landscape
-3. Use `sa-brainstorm-session` for ideation and problem-solving
-4. Use `sa-stakeholder-analysis` to understand user needs
-
-### Architecture and Design
-1. Use `sa-analyze-brownfield` for existing system analysis
-2. Use `sa-create-architecture` for new system design
-3. Use `sa-tech-recommendations` for technology selection
-4. Use `sa-design-system` for component architecture
-
-### Quality Assurance
-1. Use `sa-review-code` for comprehensive code reviews
-2. Use `sa-validate-quality` for quality standards compliance
-3. Use `sa-refactor-code` for code improvement recommendations
-4. Use `sa-accessibility-audit` for accessibility compliance
-
 ## Best Practices
 
 ### Agent Usage
 - Use specific agents for their specialized tasks
 - Leverage agent collaboration for complex workflows
 - Follow the Super Agents methodology for optimal results
-- Always start with `sa-initialize-project` for new projects
 
 ### Workflow Optimization  
 - Initialize projects properly with `sa-initialize-project`
 - Track dependencies using `sa-dependency-graph`
 - Monitor progress regularly with `sa-track-progress`
 - Validate implementations with appropriate QA tools
-- Use `sa-workflow-status` to check current phase
-
-### Task Management
-- Break down complex work with `sa-expand-task`
-- Use `sa-analyze-complexity` for effort estimation
-- Track task relationships with dependency tools
-- Validate story completeness with `sa-validate-story-draft`
 
 ### Performance Considerations
 - Use task-specific tools rather than general-purpose ones
 - Break complex work into smaller, manageable tasks
 - Leverage agent specializations for efficiency
-- Regularly validate dependencies to avoid conflicts
 
 ## Common Commands
 
@@ -159,75 +139,14 @@ This project uses the Super Agents framework to provide AI-powered development a
 - `/sa-research <topic>` - Run analyst research on a topic
 - `/sa-create-prd <feature>` - Generate PRD with PM agent
 - `/sa-implement <story>` - Implement feature with developer agent
-- `/sa-review-code` - Perform QA code review
-- `/sa-design-system` - Create system architecture
 
 ## Integration Details
 
 This Claude Code integration provides:
-- **Full MCP Server Support**: All 40+ Super Agents tools available via MCP protocol
-- **Custom Slash Commands**: Convenient commands for common workflows
-- **Agent-Specific Documentation**: Detailed guides for each specialized agent
-- **Event Hooks**: Workflow monitoring and progress tracking
-- **Comprehensive Tool Registration**: All tools validated and properly configured
-- **Standalone Installation**: Manual setup option for any project
+- Full MCP server support with all Super Agents tools
+- Custom slash commands for common workflows
+- Agent-specific documentation and usage patterns
+- Event hooks for workflow monitoring
+- Comprehensive tool registration and validation
 
-### MCP Configuration
-The MCP server runs on `super-agents` namespace with tools accessible via the MCP protocol:
-```json
-{
-  "mcpServers": {
-    "super-agents": {
-      "command": "node",
-      "args": ["sa-engine/mcp-server/index.js"],
-      "env": {
-        "SA_PROJECT_ROOT": ".",
-        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
-        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
-        "SA_LOG_LEVEL": "info"
-      }
-    }
-  }
-}
-```
-
-### Tool Categories
-Tools are organized by agent specialization:
-- **8 Agent Categories**: Each with specialized tools for their domain
-- **4 Core Tools**: Essential project management functionality
-- **4 Dependency Tools**: Task relationship management
-- **4 Workflow Tools**: Process and progress management
-- **32+ Agent Tools**: Specialized functionality for each agent type
-
-### Environment Setup
-Required environment variables:
-- `ANTHROPIC_API_KEY`: For Claude API access
-- `OPENAI_API_KEY`: For GPT model access (optional)
-- `SA_PROJECT_ROOT`: Project root directory (default: current directory)
-- `SA_LOG_LEVEL`: Logging verbosity (info, debug, warn, error)
-
-## Troubleshooting
-
-### Common Issues
-1. **MCP Server Not Starting**: Check API keys and project root path
-2. **Tools Not Loading**: Verify tool directory structure and permissions
-3. **Agent Not Responding**: Check agent configuration files and API access
-4. **Dependency Conflicts**: Use `sa-validate-dependencies` to identify issues
-
-### Debug Commands
-- Check MCP server status with workflow tools
-- Validate tool loading with `sa-list-tasks`
-- Test agent connectivity with simple tools first
-- Review logs for detailed error information
-
-## Support and Documentation
-
-For detailed documentation, examples, and support:
-- Review agent configuration files in `sa-engine/agents/`
-- Check tool implementations in `sa-engine/mcp-server/tools/`
-- Reference workflow procedures in `sa-engine/procedures/`
-- See template examples in `sa-engine/templates/`
-
----
-*Generated by Super Agents Framework v1.0.0*
-*Claude Code Integration - Phase 10 Implementation*
+For support and documentation, refer to the Super Agents framework documentation in the project repository.

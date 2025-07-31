@@ -1,0 +1,68 @@
+{
+  "name": "Super Agents - Workflow Configuration",
+  "description": "Configuration for workflow patterns and execution",
+  "workflows": {
+    "greenfield-development": {
+      "name": "Greenfield Development",
+      "description": "Complete workflow for new project development",
+      "phases": [
+        {
+          "name": "research",
+          "agent": "analyst",
+          "duration": "2-3 days"
+        },
+        {
+          "name": "planning",
+          "agent": "pm",
+          "duration": "3-5 days"
+        },
+        {
+          "name": "architecture",
+          "agent": "architect",
+          "duration": "2-4 days"
+        },
+        {
+          "name": "implementation",
+          "agent": "developer",
+          "duration": "variable"
+        },
+        {
+          "name": "quality-review",
+          "agent": "qa",
+          "duration": "1-2 days"
+        }
+      ]
+    },
+    "brownfield-enhancement": {
+      "name": "Brownfield Enhancement",
+      "description": "Workflow for enhancing existing systems",
+      "phases": [
+        {
+          "name": "analysis",
+          "agent": "architect",
+          "duration": "1-2 days"
+        },
+        {
+          "name": "impact-assessment",
+          "agent": "analyst",
+          "duration": "1-2 days"
+        },
+        {
+          "name": "planning",
+          "agent": "pm",
+          "duration": "2-3 days"
+        },
+        {
+          "name": "implementation",
+          "agent": "developer",
+          "duration": "variable"
+        },
+        {
+          "name": "integration-testing",
+          "agent": "qa",
+          "duration": "2-3 days"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "super-agents": {
+      "command": "node",
+      "args": ["../../../sa-engine/mcp-server/index.js"],
+      "env": {
+        "SA_PROJECT_ROOT": "../../../",
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "SA_LOG_LEVEL": "info",
+        "SA_IDE_CONTEXT": "windsurf"
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "name": "Super Agents - Agent Configuration",
+  "description": "Configuration for individual agent behavior and capabilities",
+  "agents": {
+    "analyst": {
+      "enabled": true,
+      "specializations": [
+        "market-research",
+        "competitive-analysis",
+        "requirements-gathering"
+      ],
+      "responseStyle": "analytical",
+      "outputFormat": "structured-report"
+    },
+    "pm": {
+      "enabled": true,
+      "specializations": [
+        "product-planning",
+        "feature-prioritization",
+        "stakeholder-management"
+      ],
+      "responseStyle": "strategic",
+      "outputFormat": "executive-summary"
+    },
+    "architect": {
+      "enabled": true,
+      "specializations": [
+        "system-design",
+        "technology-selection",
+        "integration-planning"
+      ],
+      "responseStyle": "technical",
+      "outputFormat": "architectural-documentation"
+    },
+    "developer": {
+      "enabled": true,
+      "specializations": [
+        "implementation",
+        "debugging",
+        "optimization"
+      ],
+      "responseStyle": "practical",
+      "outputFormat": "code-and-documentation"
+    },
+    "qa": {
+      "enabled": true,
+      "specializations": [
+        "code-review",
+        "quality-validation",
+        "testing-strategy"
+      ],
+      "responseStyle": "critical",
+      "outputFormat": "quality-report"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+name: backup-project-state
+description: Backup project state and configuration
+version: 1.0.0
+created: '2025-07-30T19:29:04.579Z'
+trigger: manual
+steps:
+  - type: command
+    name: Create Backup
+    command: sa backup
+  - type: file-operation
+    name: Archive Logs
+    operation: copy
+    params:
+      source: .super-agents/logs
+      destination: .super-agents/backups/logs-backup
+environment: {}
+notifications: {}

@@ -1,8 +1,79 @@
-# Super Agents MCP Testing Suite
+# Super Agents Integration Testing Framework
 
-## Overview
+Comprehensive end-to-end testing suite for the Super Agents Framework, ensuring reliability, performance, and compatibility across all supported IDEs and environments.
 
-This directory contains the comprehensive testing infrastructure for Super Agents MCP (Model Context Protocol) tools, implementing Phase 8 of the development roadmap. The testing suite provides thorough validation of all MCP tools through unit tests, integration tests, and end-to-end testing scenarios.
+## 🎯 Overview
+
+This testing framework validates:
+- ✅ **Complete Workflow Testing**: Full project lifecycle from analysis to deployment
+- ✅ **Cross-IDE Compatibility**: Claude Code, Cursor, VS Code, Windsurf, and generic AI assistants
+- ✅ **Performance Benchmarking**: Tool execution speed, memory usage, and scalability
+- ✅ **Error Recovery**: Network failures, API errors, configuration issues, and service interruptions
+- ✅ **Test Automation**: CI/CD integration with GitHub Actions, GitLab CI, and Jenkins
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18.0+
+- NPM 8.0+
+- 4GB RAM (8GB recommended)
+- 2GB disk space
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+cd sa-engine/tests && npm install
+
+# Start MCP server
+cd ../mcp-server && npm start
+
+# Run integration tests
+cd ../tests/e2e
+node integration-test-runner.js
+```
+
+### Running Specific Test Suites
+
+```bash
+# Workflow testing only
+node integration-test-runner.js --workflow-only
+
+# IDE compatibility testing
+node integration-test-runner.js --ide-only
+
+# Performance benchmarking
+node integration-test-runner.js --performance-only
+
+# Error recovery testing
+node integration-test-runner.js --error-recovery-only
+
+# CI mode (non-interactive)
+node integration-test-runner.js --ci
+```
+
+## 📁 Framework Structure
+
+```
+sa-engine/tests/e2e/
+├── integration-test-runner.js     # Main test runner
+├── framework/                     # Core testing framework
+│   ├── TestRunner.js             # Test execution engine
+│   ├── TestMetrics.js            # Metrics collection
+│   ├── PerformanceMonitor.js     # Performance tracking
+│   ├── ErrorRecoveryTester.js    # Error scenario testing
+│   └── IDETestManager.js         # IDE integration management
+├── workflows/                     # Workflow testing
+│   ├── CompleteWorkflowTests.js  # End-to-end workflow tests
+│   └── WorkflowExecutor.js       # Workflow execution engine
+├── ide-compatibility/             # IDE-specific tests
+│   └── CrossIDETests.js          # Cross-IDE compatibility tests
+├── automation/                    # CI/CD automation
+│   └── TestAutomation.js         # Automation infrastructure
+├── fixtures/                      # Test data and mocks
+└── test-results/                  # Generated reports and artifacts
+```
 
 ## Testing Strategy
 
