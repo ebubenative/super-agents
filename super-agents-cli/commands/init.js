@@ -156,7 +156,7 @@ export async function initCommand(options) {
     spinner.text = 'Creating configuration...';
 
     // Step 3: Create Super Agents structure in target directory
-    await createSuperAgentsStructure(targetDirectory);
+    await createSuperAgentsStructure(targetDirectory, spinner);
 
     // Initialize configuration
     const config = await configManager.initializeProject({
@@ -220,7 +220,7 @@ export async function initCommand(options) {
 }
 
 // Helper function to create Super Agents structure in target directory
-async function createSuperAgentsStructure(targetPath) {
+async function createSuperAgentsStructure(targetPath, spinner) {
   const { mkdir, writeFile } = await import('fs/promises');
   const { fileURLToPath } = await import('url');
   const { dirname: pathDirname } = await import('path');
@@ -304,6 +304,9 @@ async function createSuperAgentsStructure(targetPath) {
     join(saDir, 'installation.json'),
     JSON.stringify(installRef, null, 2)
   );
+  
+  // Setup Node.js dependencies for MCP server
+  await setupMcpDependencies(targetPath, spinner);
 }
 
 // Helper function to create .env file
@@ -333,4 +336,78 @@ MCP_SERVER_HOST=localhost
 `;
 
   await writeFile(join(targetPath, '.env'), envContent);
+}
+
+// Helper function to setup MCP server dependencies
+async function setupMcpDependencies(targetPath, spinner) {
+  const { readFile, writeFile } = await import('fs/promises');
+  const { existsSync } = await import('fs');
+  const { exec } = await import('child_process');
+  const { promisify } = await import('util');
+  const execAsync = promisify(exec);
+  
+  if (spinner) spinner.text = 'Setting up Node.js dependencies for MCP server...';
+  
+  const packageJsonPath = join(targetPath, 'package.json');
+  let packageJson = {};
+  
+  // Read existing package.json or create new one
+  if (existsSync(packageJsonPath)) {
+    try {
+      const content = await readFile(packageJsonPath, 'utf8');
+      packageJson = JSON.parse(content);
+    } catch (error) {
+      console.log(chalk.yellow('⚠ Could not parse existing package.json, creating new one'));
+    }
+  }
+  
+  // Ensure ES module support and basic structure
+  packageJson = {
+    name: packageJson.name || 'super-agents-project',
+    version: packageJson.version || '1.0.0',
+    type: 'module',
+    description: packageJson.description || 'Super Agents project with MCP server support',
+    scripts: {
+      ...packageJson.scripts,
+      'sa:mcp-test': 'node sa-engine/mcp-server/index.js --help'
+    },
+    dependencies: {
+      ...packageJson.dependencies,
+      '@modelcontextprotocol/sdk': '^0.4.0',
+      'yaml': '^2.3.4',
+      'handlebars': '^4.7.8',
+      'fs-extra': '^11.2.0',
+      'chalk': '^5.3.0',
+      'uuid': '^9.0.1',
+      'joi': '^17.11.0',
+      'inquirer': '^9.2.12'
+    },
+    devDependencies: {
+      ...packageJson.devDependencies
+    }
+  };
+  
+  // Write updated package.json
+  await writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  
+  if (spinner) spinner.text = 'Installing MCP server dependencies...';
+  
+  try {
+    // Install dependencies
+    const { stdout, stderr } = await execAsync('npm install', { 
+      cwd: targetPath,
+      timeout: 120000 // 2 minute timeout
+    });
+    
+    if (stderr && !stderr.includes('npm WARN')) {
+      console.log(chalk.yellow('⚠ npm install warnings:'));
+      console.log(chalk.gray(stderr));
+    }
+    
+    console.log(chalk.green('✓ MCP server dependencies installed successfully'));
+  } catch (error) {
+    console.log(chalk.yellow('⚠ Could not install dependencies automatically'));
+    console.log(chalk.gray('Please run "npm install" manually in your project directory'));
+    console.log(chalk.gray(`Error: ${error.message}`));
+  }
 }

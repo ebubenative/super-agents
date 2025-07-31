@@ -48,6 +48,14 @@ sa init --name="New Project" --interactive
 # Will ask where to create the project
 ```
 
+**What happens during initialization:**
+- Creates/updates `package.json` with ES module support (`"type": "module"`)
+- Automatically installs MCP server dependencies:
+  - `@modelcontextprotocol/sdk` - Core MCP functionality
+  - `yaml`, `handlebars`, `fs-extra`, `chalk`, `uuid`, `joi`, `inquirer` - Supporting packages
+- Copies Super Agents engine to your project
+- Sets up project structure and configuration
+
 ### Step 3: IDE Integration
 
 ```bash
@@ -295,6 +303,15 @@ export ANTHROPIC_API_KEY=your_key_here
 ```bash
 # Solution: Use absolute paths in IDE configuration
 # Edit .claude/desktop_app_config.json with full paths
+```
+
+### Issue: MCP server dependencies missing
+```bash
+# Error: MODULE_NOT_FOUND for @modelcontextprotocol/sdk
+# Solution: Re-run initialization to install dependencies
+sa init --name="Your Project"
+# OR manually install in project root:
+npm install @modelcontextprotocol/sdk yaml handlebars fs-extra chalk uuid joi inquirer
 ```
 
 ### Issue: Permission errors
