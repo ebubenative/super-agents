@@ -221,14 +221,52 @@ export async function initCommand(options) {
 
 // Helper function to create Super Agents structure in target directory
 async function createSuperAgentsStructure(targetPath) {
-  const { mkdir, writeFile, copyFile } = await import('fs/promises');
+  const { mkdir, writeFile } = await import('fs/promises');
   const { fileURLToPath } = await import('url');
   const { dirname: pathDirname } = await import('path');
+  const { copyDirectoryRecursive, findSuperAgentsInstallation, verifyDirectoryContent } = await import('../utils/fileUtils.js');
   
   // Get the Super Agents installation directory (where this CLI is running from)
   const currentFileUrl = import.meta.url;
   const currentFilePath = fileURLToPath(currentFileUrl);
   const superAgentsRoot = resolve(pathDirname(currentFilePath), '../..');
+  
+  // Find the source sa-engine directory
+  const sourceSaEngine = await findSuperAgentsInstallation(currentFilePath);
+  const targetSaEngine = join(targetPath, 'sa-engine');
+  
+  console.log(chalk.gray(`Copying sa-engine from: ${sourceSaEngine}`));
+  console.log(chalk.gray(`Copying sa-engine to: ${targetSaEngine}`));
+  
+  // Copy the complete sa-engine directory structure
+  const copyResults = await copyDirectoryRecursive(sourceSaEngine, targetSaEngine, {
+    overwrite: false,
+    verbose: false,
+    exclude: ['.git', 'node_modules', '.DS_Store', 'Thumbs.db', 'logs', '*.log']
+  });
+  
+  console.log(chalk.green(`✓ Copied ${copyResults.copied} files, skipped ${copyResults.skipped} existing files`));
+  
+  if (copyResults.errors.length > 0) {
+    console.log(chalk.yellow(`⚠ ${copyResults.errors.length} copy errors occurred`));
+    for (const error of copyResults.errors.slice(0, 3)) { // Show first 3 errors
+      console.log(chalk.gray(`  - ${error.item}: ${error.error}`));
+    }
+  }
+  
+  // Verify critical files were copied properly
+  const criticalFiles = [
+    'agents/analyst.json',
+    'agents/developer.json',
+    'agents/pm.json',
+    'mcp-server/index.js',
+    'mcp-server/tools/tools-schema.json'
+  ];
+  
+  const verification = await verifyDirectoryContent(targetSaEngine, criticalFiles);
+  if (!verification.valid) {
+    console.log(chalk.yellow(`⚠ Some critical files may be empty: ${verification.emptyFiles.join(', ')}`));
+  }
   
   // Create .super-agents directory
   const saDir = join(targetPath, '.super-agents');
@@ -246,14 +284,20 @@ async function createSuperAgentsStructure(targetPath) {
     await mkdir(join(saDir, dir), { recursive: true });
   }
   
-  // Create a reference to the Super Agents installation
+  // Create a reference to the Super Agents installation (maintaining backward compatibility)
   const installRef = {
     superAgentsPath: superAgentsRoot,
-    mcpServerPath: join(superAgentsRoot, 'sa-engine/mcp-server/index.js'),
-    agentsPath: join(superAgentsRoot, 'sa-engine/agents'),
-    templatesPath: join(superAgentsRoot, 'sa-engine/templates'),
+    localSaEnginePath: targetSaEngine, // New: reference to local copy
+    mcpServerPath: join(targetSaEngine, 'mcp-server/index.js'), // Updated to use local copy
+    agentsPath: join(targetSaEngine, 'agents'), // Updated to use local copy
+    templatesPath: join(targetSaEngine, 'templates'), // Updated to use local copy
     installedAt: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.0.0',
+    copyResults: {
+      copied: copyResults.copied,
+      skipped: copyResults.skipped,
+      errors: copyResults.errors.length
+    }
   };
   
   await writeFile(

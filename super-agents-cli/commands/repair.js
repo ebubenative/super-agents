@@ -1,9 +1,10 @@
 import chalk from 'chalk';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import { readFile, writeFile, mkdir } from 'fs/promises';
+import { readFile, writeFile, mkdir, readdir } from 'fs/promises';
 import { join, resolve, dirname } from 'path';
 import { StateManager } from '../../sa-engine/state-manager/StateManager.js';
 import { ConfigManager } from '../../sa-engine/config/ConfigManager.js';
+import { copyDirectoryRecursive, findSuperAgentsInstallation, verifyDirectoryContent } from '../utils/fileUtils.js';
 
 export async function repairCommand(options) {
   try {
@@ -92,48 +93,117 @@ async function runSpecificRepair(issue, repairs) {
 async function repairProjectStructure(repairs) {
   console.log(chalk.cyan('📁 Repairing project structure...'));
   
-  const requiredDirs = [
-    'sa-engine',
-    'sa-engine/state-manager',
-    'sa-engine/config',
-    'sa-engine/utils',
-    'sa-engine/agents',
-    'sa-engine/mcp-server',
-    'sa-engine/mcp-server/tools',
-    'sa-engine/procedures',
-    'sa-engine/templates',
-    'sa-engine/data',
-    'super-agents-cli',
-    'super-agents-cli/commands'
-  ];
-  
-  for (const dir of requiredDirs) {
-    try {
-      if (!existsSync(dir)) {
-        await mkdir(dir, { recursive: true });
-        console.log(`${chalk.green('✓')} Created directory: ${dir}`);
-        repairs.successful++;
+  try {
+    // Find the source sa-engine installation
+    const sourceSaEngine = await findSuperAgentsInstallation(import.meta.url);
+    const targetSaEngine = resolve('./sa-engine');
+    
+    console.log(chalk.gray(`Source sa-engine: ${sourceSaEngine}`));
+    console.log(chalk.gray(`Target sa-engine: ${targetSaEngine}`));
+    
+    // Check if sa-engine directory exists
+    if (!existsSync(targetSaEngine)) {
+      // Copy the complete sa-engine directory
+      console.log(chalk.cyan('Copying complete sa-engine directory...'));
+      const copyResults = await copyDirectoryRecursive(sourceSaEngine, targetSaEngine, {
+        overwrite: false,
+        verbose: false,
+        exclude: ['.git', 'node_modules', '.DS_Store', 'Thumbs.db', 'logs', '*.log']
+      });
+      
+      console.log(`${chalk.green('✓')} Copied ${copyResults.copied} files to sa-engine/`);
+      repairs.successful++;
+      repairs.attempted++;
+      repairs.results.push({
+        success: true,
+        description: `Copied complete sa-engine directory (${copyResults.copied} files)`,
+        details: copyResults.errors.length > 0 ? `${copyResults.errors.length} copy errors occurred` : 'All files copied successfully'
+      });
+      
+      if (copyResults.errors.length > 0) {
+        console.log(chalk.yellow(`⚠ ${copyResults.errors.length} copy errors occurred`));
         repairs.results.push({
-          success: true,
-          description: `Created missing directory: ${dir}`
-        });
-      } else {
-        repairs.skipped++;
-        repairs.results.push({
-          skipped: true,
-          description: `Directory already exists: ${dir}`
+          success: false,
+          description: `Copy errors occurred for ${copyResults.errors.length} files`,
+          details: copyResults.errors.slice(0, 3).map(e => `${e.item}: ${e.error}`).join('; ')
         });
       }
-      repairs.attempted++;
-    } catch (error) {
-      console.log(`${chalk.red('✗')} Failed to create directory ${dir}: ${error.message}`);
-      repairs.failed++;
+    } else {
+      // sa-engine exists, check for missing/empty critical directories and files
+      const criticalDirs = [
+        'agents',
+        'mcp-server',
+        'mcp-server/tools',
+        'templates',
+        'config',
+        'state-manager'
+      ];
+      
+      let repairedItems = 0;
+      
+      for (const dir of criticalDirs) {
+        const targetDir = join(targetSaEngine, dir);
+        const sourceDir = join(sourceSaEngine, dir);
+        
+        if (!existsSync(targetDir) || (existsSync(targetDir) && (await readdir(targetDir)).length === 0)) {
+          if (existsSync(sourceDir)) {
+            console.log(chalk.cyan(`Repairing directory: ${dir}`));
+            const copyResults = await copyDirectoryRecursive(sourceDir, targetDir, {
+              overwrite: true,
+              verbose: false
+            });
+            
+            console.log(`${chalk.green('✓')} Repaired ${dir} (${copyResults.copied} files)`);
+            repairedItems++;
+            repairs.results.push({
+              success: true,
+              description: `Repaired ${dir} directory (${copyResults.copied} files)`
+            });
+          }
+        }
+      }
+      
+      if (repairedItems > 0) {
+        repairs.successful++;
+        repairs.attempted++;
+      } else {
+        repairs.skipped++;
+        repairs.attempted++;
+        repairs.results.push({
+          skipped: true,
+          description: 'Project structure is already complete'
+        });
+      }
+    }
+    
+    // Verify critical files are present and not empty
+    const criticalFiles = [
+      'agents/analyst.json',
+      'agents/developer.json',
+      'agents/pm.json',
+      'mcp-server/index.js',
+      'mcp-server/tools/tools-schema.json'
+    ];
+    
+    const verification = await verifyDirectoryContent(targetSaEngine, criticalFiles);
+    if (!verification.valid) {
+      console.log(chalk.yellow(`⚠ Some critical files may be missing or empty: ${verification.emptyFiles.join(', ')}`));
       repairs.results.push({
         success: false,
-        description: `Failed to create directory: ${dir}`,
-        details: error.message
+        description: 'Some critical files are missing or empty',
+        details: verification.emptyFiles.join(', ')
       });
     }
+    
+  } catch (error) {
+    console.log(`${chalk.red('✗')} Project structure repair failed: ${error.message}`);
+    repairs.failed++;
+    repairs.attempted++;
+    repairs.results.push({
+      success: false,
+      description: 'Project structure repair failed',
+      details: error.message
+    });
   }
 }
 
@@ -231,115 +301,98 @@ async function repairMcpServer(repairs) {
   console.log(chalk.cyan('🔌 Repairing MCP server...'));
   
   try {
-    const mcpServerPath = resolve('./sa-engine/mcp-server/index.js');
+    // Find the source sa-engine installation
+    const sourceSaEngine = await findSuperAgentsInstallation(import.meta.url);
+    const sourceMcpServerDir = join(sourceSaEngine, 'mcp-server');
+    const targetMcpServerDir = resolve('./sa-engine/mcp-server');
     
-    if (!existsSync(mcpServerPath)) {
-      // Create basic MCP server file
-      const mcpServerContent = `#!/usr/bin/env node
-
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { promises as fs } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-class SuperAgentsMCPServer {
-  constructor() {
-    this.server = new Server(
-      {
-        name: 'super-agents',
-        version: '1.0.0',
-      },
-      {
-        capabilities: {
-          tools: {},
-        },
-      }
-    );
-    
-    this.setupToolHandlers();
-  }
-
-  setupToolHandlers() {
-    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
-      return {
-        tools: [
-          {
-            name: 'sa-get-task',
-            description: 'Get task details by ID',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                taskId: {
-                  type: 'string',
-                  description: 'The task ID to retrieve'
-                }
-              },
-              required: ['taskId']
-            }
-          }
-        ]
-      };
-    });
-
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      const { name, arguments: args } = request.params;
-      
-      switch (name) {
-        case 'sa-get-task':
-          return {
-            content: [
-              {
-                type: 'text',
-                text: \`Task \${args.taskId} - Basic MCP server response\`
-              }
-            ]
-          };
-        default:
-          throw new Error(\`Unknown tool: \${name}\`);
-      }
-    });
-  }
-
-  async run() {
-    const transport = new StdioServerTransport();
-    await this.server.connect(transport);
-    console.error('Super Agents MCP server running on stdio');
-  }
-}
-
-if (import.meta.url === \`file://\${process.argv[1]}\`) {
-  const server = new SuperAgentsMCPServer();
-  server.run().catch(console.error);
-}
-`;
-      
-      // Ensure directory exists
-      const mcpServerDir = dirname(mcpServerPath);
-      if (!existsSync(mcpServerDir)) {
-        await mkdir(mcpServerDir, { recursive: true });
-      }
-      
-      await writeFile(mcpServerPath, mcpServerContent);
-      console.log(`${chalk.green('✓')} Created basic MCP server`);
-      repairs.successful++;
+    if (!existsSync(sourceMcpServerDir)) {
+      console.log(chalk.yellow('⚠ Source MCP server directory not found, cannot repair MCP server'));
+      repairs.failed++;
+      repairs.attempted++;
       repairs.results.push({
-        success: true,
-        description: 'Created basic MCP server file',
-        details: `MCP server created at: ${mcpServerPath}`
+        success: false,
+        description: 'Source MCP server directory not found',
+        details: `Expected at: ${sourceMcpServerDir}`
       });
+      return;
+    }
+    
+    const mcpServerIndexPath = join(targetMcpServerDir, 'index.js');
+    const toolsDir = join(targetMcpServerDir, 'tools');
+    
+    let repairedItems = 0;
+    
+    // Check if MCP server index file exists and has substantial content
+    if (!existsSync(mcpServerIndexPath)) {
+      console.log(chalk.cyan('Copying MCP server index.js...'));
+      // Ensure directory exists
+      if (!existsSync(targetMcpServerDir)) {
+        await mkdir(targetMcpServerDir, { recursive: true });
+      }
+      
+      const sourceIndexPath = join(sourceMcpServerDir, 'index.js');
+      if (existsSync(sourceIndexPath)) {
+        const sourceContent = await readFile(sourceIndexPath, 'utf8');
+        await writeFile(mcpServerIndexPath, sourceContent);
+        console.log(`${chalk.green('✓')} Repaired MCP server index.js`);
+        repairedItems++;
+        repairs.results.push({
+          success: true,
+          description: 'Repaired MCP server index.js'
+        });
+      }
+    }
+    
+    // Check if tools directory exists and has content
+    if (!existsSync(toolsDir) || (existsSync(toolsDir) && (await readdir(toolsDir)).length === 0)) {
+      console.log(chalk.cyan('Copying MCP server tools...'));
+      const sourceToolsDir = join(sourceMcpServerDir, 'tools');
+      
+      if (existsSync(sourceToolsDir)) {
+        const copyResults = await copyDirectoryRecursive(sourceToolsDir, toolsDir, {
+          overwrite: true,
+          verbose: false
+        });
+        
+        console.log(`${chalk.green('✓')} Repaired MCP server tools (${copyResults.copied} files)`);
+        repairedItems++;
+        repairs.results.push({
+          success: true,
+          description: `Repaired MCP server tools (${copyResults.copied} files)`
+        });
+      }
+    }
+    
+    // Check for other critical MCP server files
+    const criticalFiles = ['MCPServer.js', 'ToolRegistry.js'];
+    for (const file of criticalFiles) {
+      const targetFile = join(targetMcpServerDir, file);
+      const sourceFile = join(sourceMcpServerDir, file);
+      
+      if (!existsSync(targetFile) && existsSync(sourceFile)) {
+        const sourceContent = await readFile(sourceFile, 'utf8');
+        await writeFile(targetFile, sourceContent);
+        console.log(`${chalk.green('✓')} Repaired ${file}`);
+        repairedItems++;
+        repairs.results.push({
+          success: true,
+          description: `Repaired ${file}`
+        });
+      }
+    }
+    
+    if (repairedItems > 0) {
+      repairs.successful++;
+      console.log(`${chalk.green('✓')} Repaired ${repairedItems} MCP server components`);
     } else {
-      console.log(`${chalk.green('✓')} MCP server file already exists`);
       repairs.skipped++;
       repairs.results.push({
         skipped: true,
-        description: 'MCP server file already exists'
+        description: 'MCP server is already complete'
       });
     }
+    
     repairs.attempted++;
     
   } catch (error) {
@@ -356,71 +409,107 @@ if (import.meta.url === \`file://\${process.argv[1]}\`) {
 async function repairAgents(repairs) {
   console.log(chalk.cyan('🤖 Repairing agents...'));
   
-  const agentTypes = [
-    { name: 'analyst', role: 'Strategic analysis and market research' },
-    { name: 'pm', role: 'Product management and requirements' },
-    { name: 'architect', role: 'System design and architecture' },
-    { name: 'developer', role: 'Implementation and coding' },
-    { name: 'qa', role: 'Quality assurance and testing' },
-    { name: 'ux-expert', role: 'User experience and design' },
-    { name: 'product-owner', role: 'Backlog and story management' },
-    { name: 'scrum-master', role: 'Workflow and process management' }
-  ];
-  
-  const agentsDir = resolve('./sa-engine/agents');
-  
-  for (const agent of agentTypes) {
-    try {
-      const agentConfigPath = join(agentsDir, `${agent.name}.json`);
-      
-      if (!existsSync(agentConfigPath)) {
-        const agentConfig = {
-          agent: {
-            name: agent.name,
-            role: agent.role,
-            status: "active",
-            type: "specialized",
-            capabilities: [
-              "task_execution",
-              "analysis",
-              "collaboration"
-            ],
-            tools: [],
-            created_at: new Date().toISOString(),
-            last_updated: new Date().toISOString()
-          }
-        };
-        
-        // Ensure directory exists
-        if (!existsSync(agentsDir)) {
-          await mkdir(agentsDir, { recursive: true });
-        }
-        
-        await writeFile(agentConfigPath, JSON.stringify(agentConfig, null, 2));
-        console.log(`${chalk.green('✓')} Created ${agent.name} agent configuration`);
-        repairs.successful++;
-        repairs.results.push({
-          success: true,
-          description: `Created ${agent.name} agent configuration`
-        });
-      } else {
-        repairs.skipped++;
-        repairs.results.push({
-          skipped: true,
-          description: `${agent.name} agent configuration already exists`
-        });
-      }
-      repairs.attempted++;
-      
-    } catch (error) {
-      console.log(`${chalk.red('✗')} Failed to create ${agent.name} agent: ${error.message}`);
+  try {
+    // Find the source sa-engine installation
+    const sourceSaEngine = await findSuperAgentsInstallation(import.meta.url);
+    const sourceAgentsDir = join(sourceSaEngine, 'agents');
+    const targetAgentsDir = resolve('./sa-engine/agents');
+    
+    if (!existsSync(sourceAgentsDir)) {
+      console.log(chalk.yellow('⚠ Source agents directory not found, cannot repair agents'));
       repairs.failed++;
+      repairs.attempted++;
       repairs.results.push({
         success: false,
-        description: `Failed to create ${agent.name} agent configuration`,
-        details: error.message
+        description: 'Source agents directory not found',
+        details: `Expected at: ${sourceAgentsDir}`
       });
+      return;
     }
+    
+    // Ensure target agents directory exists
+    if (!existsSync(targetAgentsDir)) {
+      await mkdir(targetAgentsDir, { recursive: true });
+    }
+    
+    // Get list of agent files from source
+    const sourceAgentFiles = await readdir(sourceAgentsDir);
+    const agentJsonFiles = sourceAgentFiles.filter(file => file.endsWith('.json'));
+    
+    let repairedAgents = 0;
+    let skippedAgents = 0;
+    
+    for (const agentFile of agentJsonFiles) {
+      try {
+        const sourceAgentPath = join(sourceAgentsDir, agentFile);
+        const targetAgentPath = join(targetAgentsDir, agentFile);
+        
+        // Check if agent file exists and has content
+        let needsRepair = false;
+        
+        if (!existsSync(targetAgentPath)) {
+          needsRepair = true;
+        } else {
+          // Check if file is empty or has minimal content
+          const targetContent = await readFile(targetAgentPath, 'utf8');
+          if (targetContent.trim().length < 100) { // Likely a minimal template
+            needsRepair = true;
+          }
+        }
+        
+        if (needsRepair) {
+          // Copy the complete agent configuration from source
+          const sourceContent = await readFile(sourceAgentPath, 'utf8');
+          await writeFile(targetAgentPath, sourceContent);
+          
+          const agentName = agentFile.replace('.json', '');
+          console.log(`${chalk.green('✓')} Repaired ${agentName} agent configuration`);
+          repairedAgents++;
+          repairs.results.push({
+            success: true,
+            description: `Repaired ${agentName} agent configuration`
+          });
+        } else {
+          skippedAgents++;
+          const agentName = agentFile.replace('.json', '');
+          repairs.results.push({
+            skipped: true,
+            description: `${agentName} agent configuration already complete`
+          });
+        }
+        
+        repairs.attempted++;
+        
+      } catch (error) {
+        const agentName = agentFile.replace('.json', '');
+        console.log(`${chalk.red('✗')} Failed to repair ${agentName} agent: ${error.message}`);
+        repairs.failed++;
+        repairs.results.push({
+          success: false,
+          description: `Failed to repair ${agentName} agent configuration`,
+          details: error.message
+        });
+      }
+    }
+    
+    if (repairedAgents > 0) {
+      repairs.successful++;
+      console.log(`${chalk.green('✓')} Repaired ${repairedAgents} agent configurations`);
+    }
+    
+    if (skippedAgents > 0) {
+      repairs.skipped += skippedAgents;
+    }
+    
+  } catch (error) {
+    console.log(`${chalk.red('✗')} Agent repair failed: ${error.message}`);
+    repairs.failed++;
+    repairs.attempted++;
+    repairs.results.push({
+      success: false,
+      description: 'Agent repair failed',
+      details: error.message
+    });
   }
 }
 
