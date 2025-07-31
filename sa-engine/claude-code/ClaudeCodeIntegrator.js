@@ -189,27 +189,41 @@ export default class ClaudeCodeIntegrator extends EventEmitter {
    * @returns {Promise<void>}
    */
   async generateMCPConfig(config) {
-    const mcpConfig = {
-      mcpServers: {
-        "super-agents": {
-          command: "node",
-          args: ["sa-engine/mcp-server/index.js"],
-          env: {
-            SA_PROJECT_ROOT: ".",
-            ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}",
-            OPENAI_API_KEY: "${OPENAI_API_KEY}",
-            SA_LOG_LEVEL: config.logLevel || "info"
+    try {
+      const mcpConfig = {
+        mcpServers: {
+          "super-agents": {
+            command: "node",
+            args: ["sa-engine/mcp-server/index.js"],
+            env: {
+              SA_PROJECT_ROOT: ".",
+              ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}",
+              OPENAI_API_KEY: "${OPENAI_API_KEY}",
+              SA_LOG_LEVEL: config.logLevel || "info"
+            }
           }
         }
-      }
-    };
+      };
 
-    // Place mcp-config.json in .claude directory instead of project root
-    const configPath = join(config.projectRoot, config.claudeConfigPath, config.mcpConfigFile);
-    await writeFile(configPath, JSON.stringify(mcpConfig, null, 2));
-    
-    this.generatedFiles.set(configPath, 'mcp-config');
-    this.log('MCP configuration generated', { configPath });
+      // Place mcp-config.json in .claude directory instead of project root
+      const configPath = join(config.projectRoot, config.claudeConfigPath, config.mcpConfigFile);
+      
+      // Ensure the .claude directory exists before writing the config file
+      const configDir = dirname(configPath);
+      if (!existsSync(configDir)) {
+        await mkdir(configDir, { recursive: true });
+        this.log('Created Claude config directory', { configDir });
+      }
+      
+      await writeFile(configPath, JSON.stringify(mcpConfig, null, 2));
+      
+      this.generatedFiles.set(configPath, 'mcp-config');
+      this.log('MCP configuration generated', { configPath });
+      
+    } catch (error) {
+      this.log('Failed to generate MCP configuration', { error: error.message }, 'error');
+      throw error;
+    }
   }
 
   /**
